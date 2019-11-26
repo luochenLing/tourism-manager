@@ -67,7 +67,7 @@
           <img src="/images/home/wedding-photography.png" alt="">
           <span>婚纱旅拍</span>
         </a>
-      </li>
+    </li>
        <li>
         <a href="#">
           <img src="/images/home/theme.png" alt="">
@@ -162,6 +162,7 @@
     import NaveBar from '../../components/comment/navBar.vue';
     Vue.use(Lazyload);
     export default Vue.extend({
+    name:'home',
     components: {
         [Button.name]: Button,
         [Swipe.name]: Swipe,
