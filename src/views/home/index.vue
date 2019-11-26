@@ -3,7 +3,7 @@
     <nave-bar>
       <img slot="nav-left" src="/images/logo.png" alt class="logo" />
       <div slot="nav-left" class="address">杭州</div>
-      <div slot="nav-center" class="nav-search">搜索关键字</div>
+      <div slot="nav-center" @click="getSearch" class="nav-search">搜索关键字</div>
       <div slot="nav-right" class="nav-my-info">我的</div>
     </nave-bar>
     <van-swipe :autoplay="3000" indicator-color="white" class="index-swiper">
@@ -182,9 +182,10 @@
         
     },
     methods:{
-      gotolink(){
-        this.$router.push('/travel');
+      getSearch(){
+        this.$router.push('/searchPanel');
       }
+
     }
   });
 </script>
@@ -205,7 +206,7 @@
         .index-swiper img {
             width: 100%;
             height: 130px;
-            padding-top: 40px;
+            padding-top: 50px;
         }
         .projects {
             background-color: #fff;

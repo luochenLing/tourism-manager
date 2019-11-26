@@ -17,5 +17,5 @@ module.exports = {
     //添加VSCODE调试
     configureWebpack: {
       devtool: 'source-map',
-    }
+    },
 }
