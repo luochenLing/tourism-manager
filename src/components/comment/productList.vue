@@ -104,7 +104,7 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .products-list{
         display: flex;
         flex-flow: column nowrap;

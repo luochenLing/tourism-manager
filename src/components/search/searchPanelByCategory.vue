@@ -9,7 +9,7 @@
             <span class="my" slot="nav-right">我的</span>
         </navBar>
         <van-tree-select
-            height="93vh"
+            height="91vh"
             :items="items"
             :main-active-index.sync="activeIndex"
             style="padding-top:50px;"
@@ -21,7 +21,7 @@
     </div>
 </template>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
     .search-layout{
         .van-sidebar-item--select{
             border-color: #23cc77;

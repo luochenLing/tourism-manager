@@ -36,7 +36,7 @@
     </div>
 </template>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .search-layout{
     .nav-search{
         background: #fff;

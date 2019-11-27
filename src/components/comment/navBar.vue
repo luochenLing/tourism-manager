@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
     .nav-title {
         background-color: #fff;
         display: flex;
@@ -35,11 +35,12 @@ export default {
         min-width: 320px;
         text-align: center;
         .back{
-            background: url("/images/comment/back.svg") no-repeat;
+            background: url("/images/comment/icon-sprite.png") no-repeat;
+            transform: scale(0.5);
             display: block;
-            width: 1.1rem;
-            height: 1.5rem;
-            background-position-y: -0.2rem;
+            width: 1.5rem;
+            height: 2rem;
+            background-position: 0px -204px;
         }
         .address {
             overflow: hidden;

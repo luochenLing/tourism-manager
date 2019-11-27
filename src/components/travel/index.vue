@@ -7,10 +7,10 @@
         <van-swipe :loop="false">
             <van-swipe-item>
                 <div class="btn-list">
-                    <a>
+                    <router-link to="/travel/travelList">
                         <img src="../../images/travel/tourist-group.png" alt="">
                         <span>跟团游</span>
-                    </a>
+                    </router-link>
                     <a>
                         <img src="../../images/travel/free-travel.png" alt="">
                         <span>自由行</span>
@@ -118,7 +118,7 @@
     }) 
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 dfn,em{
     font-style: normal;
 }
