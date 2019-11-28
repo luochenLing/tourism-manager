@@ -35,7 +35,7 @@ export default {
         min-width: 320px;
         text-align: center;
         .back{
-            background: url("/images/comment/icon-sprite.png") no-repeat;
+            background: url("/images/common/icon-sprite.png") no-repeat;
             transform: scale(0.5);
             display: block;
             width: 1.5rem;

@@ -97,8 +97,8 @@
 </template>
 <script lang="ts">
     import { Vue } from "vue-property-decorator";
-    import  NavBar from "../comment/navBar.vue";
-    import  ProductList from '../comment/productList.vue'
+    import  NavBar from "../common/navBar.vue";
+    import  ProductList from '../common/productList.vue'
     import { Swipe, SwipeItem,Icon } from 'vant';
 
     export default Vue.extend({

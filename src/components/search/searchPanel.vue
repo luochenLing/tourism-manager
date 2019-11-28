@@ -2,9 +2,9 @@
     <div class="search-layout">
         <NavBar class="nav-search">
             <span class="cancel" @click="cancel" slot="nav-left">取消</span>
-            <input class="search-content" v-model="condition" slot="nav-center" @keyup="showClearSearch" type="text" placeholder="目的地"/>
+            <input class="search-content" v-model="condition" slot="nav-center" @keyup="showClearSearch" type="text" placeholder="目的地" v-focus="true"/>
             <van-icon slot="nav-right" @click="clearCondition" v-show="showClearDom" class="nav-clear" name="clear" color="#999" size="30px" />
-            <van-icon slot="nav-right" class="search-pro" name="search" color="#2dbb55" size="30px" />
+            <van-icon slot="nav-right" class="search-pro" @click="search" name="search" color="#2dbb55" size="30px" />
         </navBar>
 
         <div class="hot">
@@ -25,12 +25,10 @@
         <div class="history">
             <div class="history-title">
                 <span>历史搜索</span>
-                <van-icon class="search-pro" name="delete" color="#2dbb55" size="20px" />
+                <van-icon @click="clear" class="search-pro" name="delete" color="#2dbb55" size="20px" />
             </div>
-            <ul class="history-content">
-                <li class="history-item">大理</li>
-                <li class="history-item">巴塞罗那</li>
-                <li class="history-item">马德里</li>
+            <ul class="history-content" v-for="(item,index) in historyList" :key="index">
+                <li class="history-item">{{item}}</li>
             </ul>
         </div>
     </div>
@@ -109,27 +107,50 @@
             }
         }
     }
-
 }
-
 </style>
 
 <script lang="ts">
-import NavBar from '../comment/navBar.vue';
+import NavBar from '../common/navBar.vue';
 import { Vue } from "vue-property-decorator";
-import { Icon } from 'vant';
-
+import { Icon,Dialog} from 'vant';
+import Search from '../travel/controller/Search';
+import _search from '../../globalVariable/travel'
 export default Vue.extend({
     name:'searchPanel',
     data(){
         return{
             condition:'',
-            showClearDom:false
+            showClearDom:false,
+            historyList:[]
         };
     },
     components:{
         NavBar,
         [Icon.name]: Icon,
+    },
+    created(){
+        
+    },
+    directives:{
+        focus:{
+            inserted:function(el){
+                el.focus();
+            },
+             update: function(el, { value }) {
+                if (value) {
+                    el.focus();
+                }
+            },
+        }
+    },
+    mounted(){
+        //历史数据获取
+        let curHistoryList:any=localStorage.getItem('searchKey');
+        if(curHistoryList){
+            curHistoryList=JSON.parse(curHistoryList);
+            this.historyList=curHistoryList;
+        }
     },
     methods:{
         //清空输入内容按钮显示
@@ -150,6 +171,33 @@ export default Vue.extend({
         //取消
         cancel(){
             this.$router.back();
+        },
+        //搜索
+        search(){
+
+            if(!this.condition){
+                Dialog.alert({
+                    title: '提示',
+                    message: '条件不能为空'
+                });
+                return;
+            }
+            var search =new Search();
+            var res =search.AddHistory(this.condition);
+            (this.historyList as string[]) = res;
+        },
+        //清空
+        clear(){
+            Dialog.confirm({
+                title: '提示',
+                message: '确定清空历史记录吗'
+            }).then(() => {
+                (this.historyList as string[]).splice(0);
+                localStorage.removeItem(_search._searchKey);
+            }).catch(() => {
+            // on cancel
+            });
+            
         }
     }
 })

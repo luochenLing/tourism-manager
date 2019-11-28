@@ -159,7 +159,7 @@
 <script lang="ts">
     import { Vue } from "vue-property-decorator";
     import { Button, Swipe, SwipeItem, Lazyload } from "vant";
-    import NaveBar from '../../components/comment/navBar.vue';
+    import NaveBar from '../../components/common/navBar.vue';
     Vue.use(Lazyload);
     export default Vue.extend({
     name:'home',
