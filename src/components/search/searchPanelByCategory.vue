@@ -15,7 +15,7 @@
             style="padding-top:50px;"
         >
             <template slot="content">
-                <product-list></product-list>
+                <!-- <product-item></product-item> -->
             </template>
         </van-tree-select>
     </div>
@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import NavBar from '../common/navBar.vue';
-import ProductList from '../common/productList.vue';
+import ProductItem from '../common/productItem.vue';
 import { Vue } from "vue-property-decorator";
 import { TreeSelect,Image,Icon } from 'vant';
 
@@ -59,7 +59,7 @@ export default Vue.extend({
         [TreeSelect.name]:TreeSelect,
         [Image.name]:Image,
         [Icon.name]:Icon,
-        ProductList
+        ProductItem
     },
     data() {
         return {

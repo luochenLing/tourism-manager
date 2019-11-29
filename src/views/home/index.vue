@@ -190,13 +190,6 @@
   });
 </script>
 <style lang="scss" scoped>
-
-    li{
-      list-style: none;
-    }
-    a{
-      text-decoration: none;
-    }
     a:hover{
       color:#551a8b;
     }

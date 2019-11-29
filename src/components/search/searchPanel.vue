@@ -77,7 +77,6 @@
             width: 100%;
             justify-content:flex-start;
             align-content:flex-start; 
-            list-style: none;
             .hot-item{
                 border: 1px solid #d4d4d4;
                 width: 20%;
@@ -129,9 +128,7 @@ export default Vue.extend({
         NavBar,
         [Icon.name]: Icon,
     },
-    created(){
-        
-    },
+
     directives:{
         focus:{
             inserted:function(el){
