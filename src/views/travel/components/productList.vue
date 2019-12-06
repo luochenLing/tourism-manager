@@ -1,6 +1,6 @@
 <template>
   <ul class="products-list" >
-    <router-link to="/travel/travelInfo" class="products-item" v-for="item in list" :key="item.id">
+    <router-link to="/travel/travelInfo" class="products-item" v-for="item in list" :key="item.id" tag="li">
       <div class="item-img">
         <img :src="item.imgUrl" alt="" />
         <slot name="img-info" :imgInfo="item"></slot>
@@ -30,13 +30,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a{
+  color:#000;
+}
 .products-list {
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
   background-color: #fff;
-  margin-top: 10px;
   width: 100%;
   align-items: initial;
   .products-item {

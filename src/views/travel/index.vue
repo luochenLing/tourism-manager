@@ -242,6 +242,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+a{
+  color:#000;
+}
 .travel-layout {
   background-color: #f0f0f0;
   .nav-search {
