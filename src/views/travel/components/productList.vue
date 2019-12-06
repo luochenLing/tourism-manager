@@ -30,6 +30,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a{
+  color:#000;
+}
 .products-list {
   display: flex;
   flex-flow: column nowrap;
