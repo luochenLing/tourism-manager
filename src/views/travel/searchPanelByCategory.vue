@@ -47,8 +47,8 @@
 </style>
 
 <script lang="ts">
-import NavBar from '../common/navBar.vue';
-import ProductItem from '../common/productItem.vue';
+import NavBar from '@/common/components/navBar.vue';
+import ProductItem from './components/productList.vue';
 import { Vue } from "vue-property-decorator";
 import { TreeSelect,Image,Icon } from 'vant';
 

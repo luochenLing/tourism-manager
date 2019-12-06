@@ -2,7 +2,7 @@
   <div id="app" class="layout" >
     <keep-alive>
       <transition>
-         <router-view></router-view>
+        <router-view></router-view>
       </transition>
     </keep-alive>
   </div>

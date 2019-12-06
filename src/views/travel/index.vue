@@ -62,17 +62,16 @@
         尾单特价
       </span>
       <ul class="special-content">
-        <recommend-proItem
-          v-for="item in specialList"
-          :key="item.id"
-          :info="item"
-        >
-          <span slot="body" class="intro">{{ item.description }}</span>
-          <span slot="footer" class="type">{{ item.category }}</span>
-        </recommend-proItem>
+        <recommend-pro-list :list="specialList">
+          <span slot="body" class="intro" slot-scope="obj">{{
+            obj.description
+          }}</span>
+          <span slot="footer" class="type" slot-scope="obj">{{
+            obj.category
+          }}</span>
+        </recommend-pro-list>
       </ul>
     </div>
-
     <div class="trip-products-list">
       <ul class="products-tabs">
         <li
@@ -94,37 +93,35 @@
           更多
         </li>
       </ul>
-      <ul class="products-list">
-        <product-item :proInfo="item" v-for="item in curProList" :key="item.id">
-          <div slot="img-info">
-            <div class="product-addr">{{ item.startingPoint }}出发</div>
-            <div class="product-price">
-              <dfn>{{ item.priceUint }}</dfn>
-              <em class="price-num">{{ item.priceNum }}</em>
-              <span>起</span>
-            </div>
-            <div class="product-other-info">
-              <div class="product-score">
-                <van-icon name="like-o" />
-                <em>{{ item.score }}</em>
-              </div>
-              <em>{{ item.pCount }}人出游</em>
-            </div>
+      <product-list :list="curProList">
+        <template slot="img-info" slot-scope="obj">
+          <div class="product-addr">{{ obj.imgInfo.startingPoint }}出发</div>
+          <div class="product-price">
+            <dfn>{{ obj.imgInfo.priceUint }}</dfn>
+            <em class="price-num">{{ obj.imgInfo.priceNum }}</em>
+            <span>起</span>
           </div>
-          <div slot="content-info">
-            <div class="item-tag">{{ item.protag.join("|") }}</div>
+          <div class="product-other-info">
+            <div class="product-score">
+              <van-icon name="like-o" />
+              <em>{{ obj.imgInfo.score }}</em>
+            </div>
+            <em>{{ obj.imgInfo.pCount }}人出游</em>
           </div>
-        </product-item>
-      </ul>
+        </template>
+        <template slot="content-info" slot-scope="obj">
+          <div class="item-tag">{{ obj.contentInfo.protag.join("|") }}</div>
+        </template>
+      </product-list>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 import { Swipe, SwipeItem, Icon, Dialog } from "vant";
-import NavBar from "../common/navBar.vue";
-import ProductItem from "../common/productItem.vue";
-import RecommendProItem from "../common/recommendProItem.vue";
+import NavBar from "@/common/components/navBar.vue";
+import ProductList from "./components/productList.vue";
+import RecommendProList from "./components/recommendProList.vue";
 
 export default Vue.extend({
   name: "Travel",
@@ -211,8 +208,8 @@ export default Vue.extend({
     [SwipeItem.name]: SwipeItem,
     [Icon.name]: Icon,
     NavBar,
-    ProductItem,
-    RecommendProItem
+    ProductList,
+    RecommendProList
   },
   methods: {
     searchPanelByCategory() {
@@ -296,13 +293,6 @@ export default Vue.extend({
         left: 0;
         top: 0;
       }
-    }
-    .special-content {
-      display: flex;
-      flex-flow: row nowrap;
-      margin-top: 0.5rem;
-      justify-content: space-evenly;
-      align-items: center;
     }
   }
 

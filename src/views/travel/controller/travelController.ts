@@ -1,8 +1,8 @@
-import _search from '@/globalVariable/travel'
+import _config from '@/globalConfig/config'
 class Search {
     //设置搜索缓存
     AddHistory(obj:string):string[]{
-        let key=_search._searchKey;
+        let key=_config._searchKey;
         let cookie = localStorage.getItem(key);
         if(cookie){
             let searchObj:string[] = JSON.parse(cookie);

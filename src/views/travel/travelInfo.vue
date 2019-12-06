@@ -84,14 +84,7 @@
     </section>
     <section class="pro-recommend">
       <div class="pro-recommend-title">相关产品推荐</div>
-      <ul class="pro-recommend-List">
-        <recommend-proItem
-          v-for="item in recommentList"
-          :key="item.id"
-          :info="item"
-        >
-        </recommend-proItem>
-      </ul>
+      <recommend-pro-list :list="recommentList"> </recommend-pro-list>
     </section>
     <div class="pro-info-footer">
       <div class="customer-service">
@@ -109,14 +102,14 @@
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 import { Swipe, SwipeItem, Icon } from "vant";
-import RecommendProItem from "../common/recommendProItem.vue";
+import RecommendProList from "./components/recommendProList.vue";
 export default Vue.extend({
   name: "TravelInfo",
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [Icon.name]: Icon,
-    RecommendProItem
+    RecommendProList
   },
   methods: {
     goBack() {
@@ -427,28 +420,27 @@ export default Vue.extend({
 }
 
 // 插件部分
-.pro-recommend-List {
+/deep/ .special-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   .special-item {
-    flex-basis: initial;
     width: 50%;
-    padding: 5px;
     box-sizing: border-box;
     // 这里使用>>>不能被sass识别。deep效果是一样的,同时也可以如下写法
-    /deep/ .infos{
-        margin-bottom: 0;
+     .infos {
+      margin-bottom: 0;
     }
-    /deep/ h3{
-        display:-webkit-box;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        -webkit-box-orient: vertical;
-        height: 48px;
-        line-height: initial;
-        white-space:initial;
+     h3 {
+      display: -webkit-box;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      height: 48px;
+      line-height: initial;
+      white-space: initial;
     }
   }
 }

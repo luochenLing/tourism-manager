@@ -110,11 +110,11 @@
 </style>
 
 <script lang="ts">
-import NavBar from '../common/navBar.vue';
+import NavBar from '@/common/components/navBar.vue';
 import { Vue } from "vue-property-decorator";
 import { Icon,Dialog} from 'vant';
-import Search from '../travel/controller/Search';
-import _search from '../../globalVariable/travel'
+import Travel from '@/views/travel/controller/travelController';
+import _config from '@/globalConfig/config'
 export default Vue.extend({
     name:'searchPanel',
     data(){
@@ -179,7 +179,7 @@ export default Vue.extend({
                 });
                 return;
             }
-            var search =new Search();
+            var search =new Travel();
             var res =search.AddHistory(this.condition);
             (this.historyList as string[]) = res;
         },
@@ -190,7 +190,7 @@ export default Vue.extend({
                 message: '确定清空历史记录吗'
             }).then(() => {
                 (this.historyList as string[]).splice(0);
-                localStorage.removeItem(_search._searchKey);
+                localStorage.removeItem(_config._searchKey);
             }).catch(() => {
             // on cancel
             });
