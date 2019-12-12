@@ -14,26 +14,11 @@
       <span class="my" slot="nav-right">我的</span>
     </NavBar>
     <div class="pro-body">
-      <div class="root" ref="navRoot">
-        <ul
-          class="left-nav"
-          ref="leftNav"
-          @touchstart="touchStart"
-          @touchmove="touchMove"
-        >
-          <li
-            :class="activeIndex == index ? 'avtice' : ''"
-            v-for="(item, index) in navList"
-            @click="getListByCategory(index)"
-            :key="index"
-          >
-            {{ item.text }}
-          </li>
-        </ul>
-      </div>
-      <div
-        class="right-count"
-      >
+      <left-nav 
+      :list="navList"
+      :navHeight="navHeight"
+      />
+      <div class="right-count">
         <product-list :list="proList"></product-list>
       </div>
     </div>
@@ -74,33 +59,9 @@
   }
 }
 
-.root {
-  float: left;
-  box-sizing: border-box;
-  overflow: hidden;
-  background: #f8f8f8;
-}
-
-.left-nav {
-  background: #f3f2f5;
-  width: 75px;
-  user-select: none;
-  transform: translateY(0) translateZ(0);
-  li {
-    list-style: none;
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-    height: 42px;
-    line-height: 42px;
-    border-bottom: solid 1px #e9e9ea;
-    position: relative;
-  }
-}
-
-.right-count{
-  margin-left:80px;
-  overflow:auto;
+.right-count {
+  margin-left: 80px;
+  overflow: auto;
 }
 
 .avtice {
@@ -119,6 +80,7 @@
 <script lang="ts">
 import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
+import leftNav from '@/common/components/leftNav.vue';
 import { Vue } from "vue-property-decorator";
 import { Image, Icon, CouponList } from "vant";
 
@@ -129,15 +91,33 @@ export default Vue.extend({
     NavBar,
     [Image.name]: Image,
     [Icon.name]: Icon,
-    ProductList
+    ProductList,
+    leftNav
   },
   data() {
     return {
-      activeIds: [1, 2],
       activeIndex: 0,
-      startY: 0,
-      elementY: 0,
+      navHeight: 50, //横向标题高度，
       navList: [
+        { text: "国内", id: "0100" },
+        { text: "国外", id: "0200" },
+        { text: "热门", id: "0300" },
+        { text: "马尔代夫", id: "0400" },
+        { text: "泰国", id: "0500" },
+        { text: "国内1", id: "0100" },
+        { text: "国外1", id: "0200" },
+        { text: "热门1", id: "0300" },
+        { text: "马尔代夫1", id: "0400" },
+        { text: "泰国1", id: "0500" },
+        { text: "国内2", id: "0100" },
+        { text: "国外2", id: "0200" },
+        { text: "热门2", id: "0300" },
+        { text: "马尔代夫2", id: "0400" },
+        { text: "泰国3", id: "0500" },
+        { text: "国内3", id: "0100" },
+        { text: "国外3", id: "0200" },
+        { text: "热门3", id: "0300" },
+        { text: "沙拉把你", id: "0400" },
         { text: "国内", id: "0100" },
         { text: "国外", id: "0200" },
         { text: "热门", id: "0300" },
@@ -246,62 +226,22 @@ export default Vue.extend({
       ]
     };
   },
-  created() {
-    // let u = navigator.userAgent;
-    // if (u.indexOf("iPhone") > -1) {
-    //inobounce.enable();
-    //}
-  },
   methods: {
     goHome() {
       this.$router.push("/home");
     },
     goSearch() {
       this.$router.push("/searchPanel");
-    },
-    getListByCategory(index: number) {
-      this.activeIndex = index;
-    },
-    touchStart(e: any) {
-      //如果使用e.preventDefault();会阻止li的点击事件，所以去掉
-      let curElementY = (this.$refs.leftNav as any).style.transform || "0"; //获取当前需要CSS样式的DOM上现有CSS，没有就先写0
-      this.startY = e.changedTouches[0].pageY; //记录当前点
-      this.elementY = curElementY.match(/-{0,}\d+\.{0,}\d{0,}/); //获取translateY(-50px)中的-50
-    },
-    touchMove(e: any) {
-      e.preventDefault(); //这里可以阻止touchMove时IOS出现的橡皮筋效果，安卓似乎也可以起到固定效果，待观察
-      var touchY = e.changedTouches[0].pageY;
-      let translateY = touchY - this.startY;
-      let domStyle = (this.$refs.leftNav as any).style;
-      let navRootHeight = (this.$refs.navRoot as any).offsetHeight;
-      let domHeight = (this.$refs.leftNav as any).offsetHeight;
-      //当到顶部的时候下拉禁止
-      let y = Number((this.elementY as any)[0]) + translateY; //滑动的距离
-      //头部到顶不动
-      if (y >= 0) {
-        domStyle.cssText = `transform: translateY(0);`;
-        return;
-      }
-      //底部到底不动
-      let overflowHeight = navRootHeight - domHeight;
-      if (y <= overflowHeight) {
-        domStyle.cssText = `transform: translateY(${overflowHeight}px);`;
-        return;
-      }
-      domStyle.cssText = `transform: translateY(${y}px);`;
     }
   },
   mounted() {
+    this.navHeight = (document.querySelector(".search-banner") as any).offsetHeight;
     let height =
       document.documentElement.clientHeight -
-      (document.querySelector(".search-banner") as any).offsetHeight;
-    (document.querySelector(".root") as any).style.height = `${height}px`;
+      this.navHeight;
     (document.querySelector(
       ".right-count"
     ) as any).style.height = `${height}px`;
-  },
-  beforeDestroy() {
-    //inobounce.disable();
   }
 });
 </script>

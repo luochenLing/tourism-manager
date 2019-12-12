@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      #anim {
+        /* position: absolute;
+        left: 0px; */
+        width: 150px;
+        height: 150px;
+        line-height: 150px;
+        background: aqua;
+        color: white;
+        border-radius: 10px;
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="anim">Click here to start animation</div>
+    <button id="cancel">取消</button>
+
+    <div id="div1" style="width: 200px;height:200px;background: gray;">
+      <div id="div2" style="width: 100px;height:100px;background: green;">
+        <button id="btn">hello</button>
+      </div>
+    </div>
+    <script>
+      window.onload = function() {
+        document.getElementById("btn").addEventListener("click", function() {
+          // body...
+          alert("hello");
+        },true);
+        document.getElementById("div1").addEventListener("click", function() {
+          alert("div1");
+        },false);
+        document.getElementById("div2").addEventListener("click", function() {
+          alert("div2");
+        },true);
+      };
+
+      window.requestAnimFrame = (function() {
+        return (
+          window.requestAnimationFrame ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame ||
+          window.oRequestAnimationFrame ||
+          window.msRequestAnimationFrame ||
+          function(callback, element) {
+            window.setTimeout(callback, 1000 / 60);
+          }
+        );
+      })();
+
+      var elem = document.getElementById("anim");
+      var startTime = undefined;
+
+      function render() {
+        console.log(1);
+        //startTime =  reque-stAnimFrame(render);
+        var a = 1,
+          b = 2,
+          c = 3;
+        if ((a == 2 && b == 2) || c == 3) {
+          console.log("哈哈");
+        }
+      }
+      document.querySelector("#cancel").addEventListener("click", () => {
+        cancelAnimationFrame(startTime);
+      });
+      elem.onclick = function() {
+        render();
+      };
+    </script>
+  </body>
+</html>
