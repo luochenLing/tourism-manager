@@ -1,42 +1,49 @@
 <template>
   <div class="layout">
-    <ul>
-      <li
-        class="condition"
-        v-for="(item, index) in list[0].children"
-        :key="index"
-      >
-        <div class="item-title">
-          <span class="title">{{ item.text }}</span>
-          <span
-            :data-index="index"
-            :class="
-              activeIndex == index && isShowAll ? 'show-all' : 'cur-select'
-            "
-            @click="showAll($event)"
-            >{{ getSelCondition(item.code) }}</span
-          >
-        </div>
-        <ul class="body" :data-code="item.code">
-          <li
-            class="line-item"
-            ref="dataItem"
-            v-for="(citem, cindex) in item.children"
-            v-show="cindex > 5 ? false : true"
-            :key="citem.id"
-            :style="(cindex + 1) % 3 == 0 ? lineStyle : ''"
-            :data-code="citem.code"
-            :class="getItemClass(item.code).indexOf(citem.code)>-1?'active':''"
-            @click="
-              checkCurItem($event, { text: citem.text, code: citem.code })
-            "
-          >
-            <span>{{ citem.text }}</span>
-            <span v-if="citem.count">{{ citem.count }}人选择</span>
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <nav-list :viewClientHeight="viewClientHeight" :domHeight="listHeight">
+      <template slot="item">
+        <li
+          class="condition"
+          v-for="(item, index) in list[0].children"
+          :key="index"
+        >
+          <div class="item-title">
+            <span class="title">{{ item.text }}</span>
+            <span
+              :data-index="index"
+              :class="
+                activeIndex == index && isShowAll == item.code
+                  ? 'show-all'
+                  : 'cur-select'
+              "
+              @click="showAll($event, item.code)"
+              >{{ getSelCondition(item.code) }}</span
+            >
+          </div>
+          <ul class="body" :data-code="item.code">
+            <li
+              class="line-item"
+              ref="dataItem"
+              v-for="(citem, cindex) in item.children"
+              v-show="cindex > 5 ? false : true"
+              :key="citem.id"
+              :style="(cindex + 1) % 3 == 0 ? lineStyle : ''"
+              :data-code="citem.code"
+              :class="
+                getItemClass(item.code).indexOf(citem.code) > -1 ? 'active' : ''
+              "
+              @click="
+                checkCurItem($event, { text: citem.text, code: citem.code })
+              "
+            >
+              <span>{{ citem.text }}</span>
+              <span v-if="citem.count">{{ citem.count }}人选择</span>
+            </li>
+          </ul>
+        </li>
+      </template>
+    </nav-list>
+
     <div class="footer-bar">
       <div class="reset" @click="resetCondition(list[0].code)">重置</div>
       <div class="submit" @click="submitCondition(list[0].code)">确定</div>
@@ -53,9 +60,9 @@
     height: 40px;
     display: block;
   }
-  & > ul {
-    overflow: scroll;
-    height: calc(100% - 88px);
+  /deep/ .root {
+    background: #fff;
+    width: 100%;
   }
   .condition {
     padding: 0 10px;
@@ -169,16 +176,26 @@
 
 <script lang="ts">
 import configEnums from "@/globalConfig/configEmuns";
+import NavList from "@/common/components/navList.vue";
 export default {
   name: "cardList",
+  components: {
+    NavList
+  },
   data() {
     return {
+      //当前选中日期
       curDateNums: [],
+      //当前出行日期
       curTravelTimes: [],
+      //当前玩乐计划
       curSpecialList: [],
+      //当前选中的列表标题项
       activeIndex: 0,
-      //当前列表项选中项
-      activeLineIndex: 0,
+      viewClientHeight: 423,
+      //选项的UL高度
+      listHeight: 0,
+      //是否显示所有的选项
       isShowAll: false,
       //选项布局样式
       lineStyle: {
@@ -193,10 +210,33 @@ export default {
       default: []
     }
   },
+  watch: {
+    list() {
+      let $this: any = this;
+      let $document: any = document;
+      //初始化高度,初始化列表位置
+      this.$nextTick(() => {
+        $this.listHeight = $document.querySelector(".nav-class").offsetHeight;
+        $document.querySelector(".nav-class").style.transform =
+          "translate3d(0px, 0px, 0px)";
+        $this.$children[0].translateY=0;;//这里如果用props操作子组件的话还要另外加变量也不太好控制，refs现在这个阶段获取不到，使用children可以把移动的位置初始化一下，解决问题
+      });
+      $this.isShowAll = false;
+    }
+  },
+  mounted() {
+    let $this: any = this;
+    //98:弹层的footer和header的高度+外边距之和
+    let height =
+      (document as any).querySelector(".card-popup").clientHeight - 98;
+    $this.viewClientHeight = height;
+  },
   methods: {
     //是否显示所有信息
     showAll(e: any) {
       var $dom = e.target;
+      let $document: any = document;
+      let $this: any = this;
       var childrenDom = $dom.parentNode.nextElementSibling.children;
       if ($dom.classList.contains("show-all")) {
         $dom.classList.remove("show-all");
@@ -217,6 +257,8 @@ export default {
           }
         }
       }
+      //伸缩的时候让子组件自适应高度
+      $this.listHeight = $document.querySelector(".nav-class").offsetHeight;
     },
     checkCurItem(e: any, obj: any) {
       let $dom = e.target;

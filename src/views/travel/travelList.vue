@@ -9,6 +9,7 @@
     <div class="travel-content">
       <nav-condition :list="conditionList" />
       <van-popup
+      class="card-popup"
         v-model="showConditionPopup"
         position="bottom"
         round
@@ -16,7 +17,7 @@
         :style="{ height: '80%' }"
       >
         <card-list v-show="isDateOrSpecialList" :list="getList()" />
-        <classic-condition-list v-if="isRecommendList" :list="getList()" />
+        <classic-condition-list v-show="isRecommendList" :list="getList()" />
       </van-popup>
       <div class="travel-list">
         <product-list :list="proList">
@@ -225,9 +226,10 @@ export default Vue.extend({
       this.$router.push("/searchPanel");
     },
     getList() {
-      let code = this.$store.getters["travelFilterCondition/getCurFilter"]
+      let $this:any =this;
+      let code = $this.$store.getters["travelFilterCondition/getCurFilter"]
         .curCode;
-      let list = this.conditionList.filter(item => item.code == code);
+      let list = $this.conditionList.filter((item:any) => item.code == code);
       return list;
     }
   }

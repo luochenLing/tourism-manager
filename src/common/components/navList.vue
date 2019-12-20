@@ -1,14 +1,7 @@
 <template>
   <div class="root" ref="root">
-    <ul class="left-nav" ref="leftNav" :style="style">
-      <li
-        :class="activeIndex == index ? 'avtice' : ''"
-        v-for="(item, index) in list"
-        @click="getActive(index)"
-        :key="index"
-      >
-        {{ item.text }}
-      </li>
+    <ul class="nav-class" ref="navList" :style="style">
+      <slot name="item"></slot>
     </ul>
   </div>
 </template>
@@ -19,47 +12,19 @@
   box-sizing: border-box;
   overflow: hidden;
   background: #f8f8f8;
-  .left-nav {
-    background: #f3f2f5;
-    width: 75px;
-    user-select: none;
-    li {
-      list-style: none;
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-      height: 42px;
-      line-height: 42px;
-      border-bottom: solid 1px #e9e9ea;
-      position: relative;
-    }
-  }
-}
-
-.avtice {
-  background: #fff;
-  &::before {
-    content: "";
-    width: 3px;
-    height: 42px;
-    background: #23cc77;
-    position: absolute;
-    left: 0;
-  }
 }
 </style>
 
 <script lang="ts">
 export default {
-  name: "leftNav",
+  name: "navList",
   props: {
-    //数据列表
-    list: {
-      type: Array,
-      default: []
-    },
     //横向标题高度
-    navHeight: {
+    subtractHeight: {
+      type: Number,
+      default: 0
+    },
+    viewClientHeight: {
       type: Number,
       default: 0
     },
@@ -83,11 +48,18 @@ export default {
       validator(value: number) {
         return value > 0;
       }
+    },
+    //列表的UL标签的高度，这个主要是应对可伸缩的UL高度进行适应管理
+    domHeight: {
+      type: Number,
+      default: 0,
+      validator(value: number) {
+        return value >= 0;
+      }
     }
   },
   data() {
     return {
-      activeIndex: 0,
       frameStartTime: 0, //动画开始时间
       frameEndTime: 0, //动画结束时间
       frameTime: 16.7, //最平滑动画的最佳循环间隔是1000ms/60，约等于16.7ms,大多数显示器的刷新频率是60Hz，相当于每秒钟重绘60次
@@ -111,12 +83,20 @@ export default {
     // 可视区高度;
     viewAreaHight() {
       let $this: any = this;
-      return document.documentElement.clientHeight - $this.navHeight;
+      return $this.viewClientHeight - $this.subtractHeight;
+    },
+    navListHeight() {
+      let $this: any = this;
+      if ($this.domHeight > 0) {
+        return $this.domHeight;
+      } else {
+        return $this.$refs.navList.offsetHeight;
+      }
     },
     //可视区与可滑动元素高度差值,就是展示你所看到的选项部分高度
     listHeight() {
       let $this: any = this;
-      return $this.$refs.leftNav.offsetHeight - $this.viewAreaHight;
+      return $this.navListHeight - $this.viewAreaHight;
     },
     style() {
       let $this: any = this;
@@ -152,10 +132,6 @@ export default {
     }
   },
   methods: {
-    getActive(index: number) {
-
-      (this as any).activeIndex = index;
-    },
     navTouchStart(e: any) {
       e.stopPropagation();
       let $this: any = this;
@@ -165,10 +141,6 @@ export default {
     },
     navTouchMove(e: any) {
       let $this: any = this;
-      //如果滚动区域的高度超过了视口说明是要有内容滚动的，不然就没有
-      if ($this.listHeight <= 0) {
-        return;
-      }
       e.preventDefault(); //这个阻止父元素的下拉事件发生
       e.stopPropagation(); //这个阻止冒泡事件
       $this.touching = true;
@@ -181,7 +153,6 @@ export default {
     navTouchEnd(e: any) {
       let $this: any = this;
       $this.touching = false;
-
       if ($this.checkReboundY()) {
         //做了边界修正后。停止动画
         cancelAnimationFrame($this.inertiaFrame);
@@ -289,7 +260,11 @@ export default {
     checkReboundY() {
       let $this: any = this;
       $this.reBounding = false;
-      if ($this.translateY > 0) {
+      if ($this.listHeight <= 0) {
+        //列表高度小于视窗高度的时候不需要滚动
+        $this.reBounding = true;
+        $this.translateY = 0;
+      } else if ($this.translateY > 0) {
         //上面的高度超了，重置为0,来个回弹效果
         $this.reBounding = true;
         $this.translateY = 0;
@@ -304,19 +279,19 @@ export default {
   },
   mounted() {
     let $this: any = this;
-    let height = document.documentElement.clientHeight - $this.navHeight;
+    let height = $this.viewClientHeight - $this.subtractHeight;
     $this.$refs.root.style.height = `${height}px`;
     //绑定事件
-    $this.$refs.leftNav.addEventListener("touchstart", $this.navTouchStart);
-    $this.$refs.leftNav.addEventListener("touchmove", $this.navTouchMove);
-    $this.$refs.leftNav.addEventListener("touchend", $this.navTouchEnd);
+    $this.$refs.navList.addEventListener("touchstart", $this.navTouchStart);
+    $this.$refs.navList.addEventListener("touchmove", $this.navTouchMove);
+    $this.$refs.navList.addEventListener("touchend", $this.navTouchEnd);
   },
   beforeDestroy() {
-    //在https://github.com/ScoutYin/ly-tab这个项目做参考的时候发现把事件移除写到了destoryed阶段，在这里发现在这个阶段的元素已经移除了，不能做绑定或移除的操作，所以写到了beforeDestroy
+    //在https://github.com/ScoutYin/ly-tab这个项目做参考的时候发现把事件移除写到了destoryed阶段，在这里发现在这个阶段的元素已经移除了，不能做绑定或移除的操作，所以写到了beforeDestroy，如果不移除，可能会导致其他页面监听这些事件的结果
     let $this: any = this;
-    $this.$refs.leftNav.removeEventListener("touchstart", $this.navTouchStart);
-    $this.$refs.leftNav.removeEventListener("touchmove", $this.navTouchMove);
-    $this.$refs.leftNav.removeEventListener("touchend", $this.navTouchEnd);
+    $this.$refs.navList.removeEventListener("touchstart", $this.navTouchStart);
+    $this.$refs.navList.removeEventListener("touchmove", $this.navTouchMove);
+    $this.$refs.navList.removeEventListener("touchend", $this.navTouchEnd);
   }
 };
 </script>

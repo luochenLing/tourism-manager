@@ -14,10 +14,21 @@
       <span class="my" slot="nav-right">我的</span>
     </NavBar>
     <div class="pro-body">
-      <left-nav 
-      :list="navList"
-      :navHeight="navHeight"
-      />
+      <nav-list
+        :subtractHeight="navHeight"
+        :viewClientHeight="viewClientHeight"
+      >
+        <template slot="item">
+          <li
+            :class="activeIndex == index ? 'avtice' : ''"
+            v-for="(item, index) in navList"
+            @click="getActive(index)"
+            :key="index"
+          >
+            {{ item.text }}
+          </li>
+        </template>
+      </nav-list>
       <div class="right-count">
         <product-list :list="proList"></product-list>
       </div>
@@ -48,6 +59,16 @@
 
   .pro-body {
     padding-top: 50px;
+    li {
+      list-style: none;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      height: 42px;
+      line-height: 42px;
+      border-bottom: solid 1px #e9e9ea;
+      position: relative;
+    }
   }
   /deep/ .products-list {
     .item-img {
@@ -75,12 +96,17 @@
     left: 0;
   }
 }
+/deep/ .nav-class {
+  background: #f3f2f5;
+  width: 75px;
+  user-select: none;
+}
 </style>
 
 <script lang="ts">
 import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
-import leftNav from '@/common/components/leftNav.vue';
+import NavList from "@/common/components/navList.vue";
 import { Vue } from "vue-property-decorator";
 import { Image, Icon, CouponList } from "vant";
 
@@ -92,12 +118,13 @@ export default Vue.extend({
     [Image.name]: Image,
     [Icon.name]: Icon,
     ProductList,
-    leftNav
+    NavList
   },
   data() {
     return {
       activeIndex: 0,
       navHeight: 50, //横向标题高度，
+      viewClientHeight: document.documentElement.clientHeight,
       navList: [
         { text: "国内", id: "0100" },
         { text: "国外", id: "0200" },
@@ -232,13 +259,16 @@ export default Vue.extend({
     },
     goSearch() {
       this.$router.push("/searchPanel");
+    },
+    getActive(index: number) {
+      (this as any).activeIndex = index;
     }
   },
   mounted() {
-    this.navHeight = (document.querySelector(".search-banner") as any).offsetHeight;
-    let height =
-      document.documentElement.clientHeight -
-      this.navHeight;
+    this.navHeight = (document.querySelector(
+      ".search-banner"
+    ) as any).offsetHeight;
+    let height = document.documentElement.clientHeight - this.navHeight;
     (document.querySelector(
       ".right-count"
     ) as any).style.height = `${height}px`;
