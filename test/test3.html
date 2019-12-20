@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul class="class1">
+      <li class="class2">
+        <div class="class2-1">
+          class2-1
+        </div>
+        <div class="class2-2">
+          class2-2
+          <div class="class2-2-1">
+            class2-2-1
+          </div>
+        </div>
+      </li>
+      <li class="class3">
+        <div class="class2-1">
+          class2-1
+        </div>
+        <div class="class2-2">
+          class2-2
+          <div class="class2-2-1">
+            class2-2-1
+          </div>
+        </div>
+      </li>
+      <li class="class4">
+        <div class="class2-1">
+          class2-1
+        </div>
+        <div class="class2-2">
+          class2-2
+          <div class="class2-2-1">
+            class2-2-1
+          </div>
+        </div>
+      </li>
+      <li class="class5">
+        <div class="class2-1">
+          class2-1
+        </div>
+        <div class="class2-2">
+          class2-2
+          <div class="class2-2-1">
+            class2-2-1
+          </div>
+        </div>
+      </li>
+    </ul>
+    <script>
+      window.onload = function() {
+        // let $dom = document.querySelector(".class2-1");
+        // //let parentNode = $dom.closest(".class1"); //获取指定的父元素
+        // window.$pRes = queryParentElement($dom, ".class1");
+        // let $pdom = document.querySelector(".class1");
+        // var dom1 = $dom.parentNode.children[0].classList.contains('class2-1');
+        // console.log(dom1);
+        let dom2 = document.querySelector(".class4").previousElementSibling
+          .previousElementSibling.nextElementSibling.nextElementSibling
+          .nextElementSibling;
+        console.log(dom2);
+      };
+      //根据ID或者class查找指定的父节点兼容IE和谷歌
+      function queryParentElement(el, selector) {
+        let isIDSelector = selector.indexOf("#") === 0;
+        if (selector.indexOf(".") === 0 || selector.indexOf("#") === 0) {
+          selector = selector.slice(1);
+        }
+        while (el) {
+          if (isIDSelector) {
+            if (el.id === selector) {
+              return el;
+            }
+          } else if (el.classList.contains(selector)) {
+            return el;
+          }
+          el = el.parentElement;
+        }
+        return null;
+      }
+    </script>
+  </body>
+</html>

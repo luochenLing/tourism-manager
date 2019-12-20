@@ -18,14 +18,14 @@
     }
     ,
     watch: {
-      '$route' (to, from) {
-        console.log(to)
-        let toName = to.name
-        console.log(from)
-        const toIndex = to.meta.index
-        const fromIndex = from.meta.index
-        //this.transitionName = toIndex < fromIndex ? 'slide-right' : 'slide-left'
-      }
+      // '$route' (to, from) {
+      //   console.log(to)
+      //   let toName = to.name
+      //   console.log(from)
+      //   const toIndex = to.meta.index
+      //   const fromIndex = from.meta.index
+      //   //this.transitionName = toIndex < fromIndex ? 'slide-right' : 'slide-left'
+      // }
     }
 })
 

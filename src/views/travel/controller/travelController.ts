@@ -1,8 +1,8 @@
-import _config from '@/globalConfig/config'
+import configEmuns from '@/globalConfig/configEmuns'
 class Search {
     //设置搜索缓存
     AddHistory(obj:string):string[]{
-        let key=_config._searchKey;
+        let key=configEmuns.searchKey;
         let cookie = localStorage.getItem(key);
         if(cookie){
             let searchObj:string[] = JSON.parse(cookie);

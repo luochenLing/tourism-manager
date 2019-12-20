@@ -153,7 +153,7 @@ export default {
   },
   methods: {
     getActive(index: number) {
-      console.log(index);
+
       (this as any).activeIndex = index;
     },
     navTouchStart(e: any) {
