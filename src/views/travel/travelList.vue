@@ -140,7 +140,11 @@ export default Vue.extend({
                 { id: 1, text: "温泉体验", code: "hotSpring" },
                 { id: 2, text: "浪漫海岛", code: "isLand" },
                 { id: 3, text: "野生动物园", code: "zoo" },
-                { id: 4, text: "人妖表演", code: "simon" }
+                { id: 4, text: "人妖表演", code: "simon" },
+                { id: 5, text: "峡谷冒险", code: "adventure" },
+                { id: 6, text: "刺激主题", code: "stimulate" },
+                { id: 7, text: "周边新发现", code: "periphery" },
+                { id: 8, text: "滑翔机", code: "glider" },
               ]
             }
           ]
