@@ -9,7 +9,7 @@
     <div class="travel-content">
       <nav-condition :list="conditionList" />
       <van-popup
-      class="card-popup"
+        class="card-popup"
         v-model="showConditionPopup"
         position="bottom"
         round
@@ -144,7 +144,7 @@ export default Vue.extend({
                 { id: 5, text: "峡谷冒险", code: "adventure" },
                 { id: 6, text: "刺激主题", code: "stimulate" },
                 { id: 7, text: "周边新发现", code: "periphery" },
-                { id: 8, text: "滑翔机", code: "glider" },
+                { id: 8, text: "滑翔机", code: "glider" }
               ]
             }
           ]
@@ -230,10 +230,10 @@ export default Vue.extend({
       this.$router.push("/searchPanel");
     },
     getList() {
-      let $this:any =this;
-      let code = $this.$store.getters["travelFilterCondition/getCurFilter"]
-        .curCode;
-      let list = $this.conditionList.filter((item:any) => item.code == code);
+      let $this: any = this;
+      let code =
+        $this.$store.getters["travelFilterCondition/getCurFilter"].curCode;
+      let list = $this.conditionList.filter((item: any) => item.code == code);
       return list;
     }
   }

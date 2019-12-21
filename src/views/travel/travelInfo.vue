@@ -27,7 +27,7 @@
       <div class="tag">上门接|上门接|上门接</div>
     </section>
     <section class="discount">
-      <div class="coupon">
+      <div class="coupon" @click="showCouponPopup">
         <span class="coupon-title">
           领券
         </span>
@@ -38,7 +38,20 @@
           <span class="coupon-item">满50000反1000</span>
         </div>
       </div>
-      <div class="activity">
+
+      <van-popup
+        class="coupon-popup"
+        v-model="showCoupon"
+        position="bottom"
+        round
+        closeable
+        :style="{ height: '80%' }"
+      >
+        <coupon :list="couponList" />
+        <!-- <activity :list="activityList" /> -->
+      </van-popup>
+
+      <div class="activity" @click="showActivityPopup">
         <span class="activity-title">
           活动
         </span>
@@ -49,7 +62,6 @@
         </div>
       </div>
     </section>
-
     <section class="feature">
       <div class="feature-title">产品特色</div>
       <div class="feature-content">
@@ -97,23 +109,55 @@
       </div>
       <div class="reserve">立即预定</div>
     </div>
+    <van-icon
+      class="top-btn"
+      name="upgrade"
+      @click="goTop"
+      v-show="showTopBtn"
+    ></van-icon>
   </div>
 </template>
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
-import { Swipe, SwipeItem, Icon } from "vant";
+import { Swipe, SwipeItem, Icon, Popup } from "vant";
 import RecommendProList from "./components/recommendProList.vue";
+import Coupon from "./components/coupon.vue";
+import Activity from "./components/activity.vue";
 export default Vue.extend({
   name: "TravelInfo",
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [Icon.name]: Icon,
-    RecommendProList
+    [Popup.name]: Popup,
+    RecommendProList,
+    Coupon,
+    Activity
   },
   methods: {
     goBack() {
       this.$router.back();
+    },
+    showCouponPopup() {
+      this.showCoupon = true;
+    },
+    showActivityPopup() {
+      this.showActivity = true;
+    },
+    getTopBtn() {
+      let scrollTop =
+        document.documentElement.scrollTop ||
+        window.pageYOffset ||
+        document.body.scrollTop;
+      if (scrollTop > 200) {
+        this.showTopBtn = true;
+      } else {
+        this.showTopBtn = false;
+      }
+    },
+    goTop() {
+      let $dom = document.documentElement || document.body;
+      $dom.scrollTop = 0;
     }
   },
   data() {
@@ -123,6 +167,10 @@ export default Vue.extend({
         "/images/home/swipper02.jpg",
         "/images/home/swipper03.jpg"
       ],
+      showCoupon: false,
+      showActivity: false,
+      showTopBtn: false,
+      //推荐列表
       recommentList: [
         {
           id: "1",
@@ -166,8 +214,104 @@ export default Vue.extend({
           imgUrl: "/images/travel/territory3.jpg",
           category: "1"
         }
+      ],
+      //活动列表
+      activityList: [
+        {
+          id: 0,
+          startTime: "2019-1-1",
+          endTime: "2019-1-2",
+          title: "【海南春节预售】提前30天及以上优惠200元/成人",
+          explain:
+            "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
+          tag: "立减优惠"
+        },
+        {
+          id: 1,
+          startTime: "2018-10-1",
+          endTime: "2019-1-2",
+          title: "【多人立减】满6成人立减600/单",
+          explain:
+            "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
+          tag: "立减优惠"
+        },
+        {
+          id: 2,
+          startTime: "2018-11-1",
+          endTime: "2018-12-2",
+          title: "点评返现5元，抵用券20元",
+          explain:
+            "自行于网上下单预订，出游归来后发表点评，每成人返现5元（电话订单除外），返现上限金额为实付金额（包括旅游券）的3%。网上预订，出游归来后发表点评，每位成人返抵用券20元。点评后，请至会员中心查看账户余额。",
+          tag: "点评返现"
+        },
+        {
+          id: 3,
+          startTime: "2019-10-1",
+          endTime: "2020-1-2",
+          title: "邮储银联信用卡最高立减500元/单",
+          explain:
+            "邮储银联信用卡支付立减活动时间：2019.10.26-2020.1.31（每天10:00-23:59）单卡活动期间限参加1次。活动细则：1.本次立减活动名额限5,880单，其中平日活动每日45个名额，周六活动每日150个名额，每日以持卡人使用邮储银联信用卡成功支付的时间先后顺序、先到先得。活动以补贴名额或补贴金额用完的先到时间为限，抢完即止。点击进入“云闪付”的时间必须从每日10点开始，提前点击进入云闪付无法享受此次优惠。如最终支付未显示立减金额，则表示名额已用完。2.立减活动的优惠金额部分不可兑换现金。如在成功支付后，因持卡人原因发生订单退货或订单增减，持卡人应承担因订单退货或订单增减而产生的团费损失。退款金额优先抵扣邮储银联信用卡提供的立减优惠。优惠名额为一次性使用，如已使用优惠名额后退货或订单增减，不可再次享受优惠。",
+          tag: "支付优惠"
+        }
+      ],
+      //优惠券列表
+      couponList: [
+        {
+          id: 0,
+          title: "每2000立减100元（最多300元）",
+          price: "300",
+          startTime: "2019-12-1",
+          endTime: "2019-12-31",
+          rule:
+            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+          explain:
+            "华夏信用卡分期立减-跟团游/邮轮每满2000元减100元优惠，每单最高减300元"
+        },
+        {
+          id: 1,
+          title: "每2000立减100元（最多500元）",
+          price: "500",
+          startTime: "2019-11-1",
+          endTime: "2019-12-22",
+          rule:
+            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+          explain: "华夏小羊肖恩亲子卡金卡每满2000减100 每单最高减500元"
+        },
+        {
+          id: 2,
+          title: "每2000立减100元（最多300元）",
+          price: "300",
+          startTime: "2020-1-1",
+          endTime: "2020-1-31",
+          rule:
+            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+          explain: "【12月】光大信用卡“魅力海南旅游节”海南国内长线满2000减300"
+        },
+        {
+          id: 3,
+          title: "满300元可用",
+          price: "50",
+          startTime: "2019-12-12",
+          endTime: "2019-12-21",
+          rule:
+            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+          explain: "江苏银行信用卡周周减-满300立减50元"
+        },
+        {
+          id: 4,
+          title: "满3000元可用",
+          price: "100",
+          startTime: "2019-10-1",
+          endTime: "2019-12-31",
+          rule:
+            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+          explain: "【交行普惠活动】交行信用卡国内产品订单满3000减100元"
+        }
       ]
     };
+  },
+  mounted() {
+    window.addEventListener("scroll", this.getTopBtn);
   }
 });
 </script>
@@ -283,7 +427,7 @@ export default Vue.extend({
           border: 1px solid #f50;
           border-radius: 5px;
           padding: 5px;
-          // 设置inline-block后，只设置行高就可以了，这里是防止溢出后成员显示不完全的BUG
+          //设置inline-block后，只设置行高就可以了，这里是防止溢出后成员显示不完全的BUG
           //需要固定父元素高度，不然overflow失效
           display: inline-block;
           line-height: 15px;
@@ -417,6 +561,18 @@ export default Vue.extend({
       line-height: 50px;
     }
   }
+
+  .top-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 8px;
+    border-radius: 100%;
+    // transform: rotate(180deg);
+    font-size: 40px;
+    background: #fff;
+    overflow: hidden;
+    color: rgba(76, 91, 109, 0.9);
+  }
 }
 
 // 插件部分
@@ -428,10 +584,10 @@ export default Vue.extend({
     width: 50%;
     box-sizing: border-box;
     // 这里使用>>>不能被sass识别。deep效果是一样的,同时也可以如下写法
-     .infos {
+    .infos {
       margin-bottom: 0;
     }
-     h3 {
+    h3 {
       display: -webkit-box;
       text-overflow: ellipsis;
       overflow: hidden;
