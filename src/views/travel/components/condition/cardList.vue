@@ -187,7 +187,7 @@ export default {
       //当前玩乐计划
       curSpecialList: [],
       //当前选中的列表标题项
-      viewClientHeight: 423,
+      viewClientHeight: 0,
       //选项的UL高度
       listHeight: 0,
       //是否显示所有的选项

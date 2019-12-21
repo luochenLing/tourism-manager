@@ -79,6 +79,13 @@ export default {
       reBoundingDuration: 360 //回弹过程duration;
     };
   },
+  watch:{
+    viewClientHeight(){
+      let $this: any = this;
+      let height = $this.viewClientHeight - $this.subtractHeight;
+      $this.$refs.root.style.height = `${height}px`;
+    }
+  },
   computed: {
     // 可视区高度;
     viewAreaHight() {
@@ -279,8 +286,6 @@ export default {
   },
   mounted() {
     let $this: any = this;
-    let height = $this.viewClientHeight - $this.subtractHeight;
-    $this.$refs.root.style.height = `${height}px`;
     //绑定事件
     $this.$refs.navList.addEventListener("touchstart", $this.navTouchStart);
     $this.$refs.navList.addEventListener("touchmove", $this.navTouchMove);
