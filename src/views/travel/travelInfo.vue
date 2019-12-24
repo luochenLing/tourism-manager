@@ -518,6 +518,7 @@ export default Vue.extend({
     top: 0;
     z-index: 10;
     justify-content: space-evenly;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     li {
       line-height: 46px;
       font-size: 15px;
