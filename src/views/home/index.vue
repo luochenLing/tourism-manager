@@ -195,10 +195,13 @@ a:hover {
 .layout {
   background-color: #f5f5f5;
   text-align: center;
-  .index-swiper img {
+  .index-swiper {
     width: 100%;
-    height: 130px;
-    padding-top: 50px;
+    img {
+      width: 100%;
+      height: 130px;
+      padding-top: 50px;
+    }
   }
   .projects {
     background-color: #fff;

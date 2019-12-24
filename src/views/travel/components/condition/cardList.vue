@@ -93,7 +93,7 @@
           display: inline-block;
           transform: rotate(-46deg);
           transition: all 0.5s ease;
-          vertical-align: middle;
+          // vertical-align: middle;
           position: absolute;
           right: 8px;
           top: 6px;

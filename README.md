@@ -29,7 +29,11 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Some tentative work
-The components here may not make sense
-Some of them are my personal exploration of ideas
-If you see something unreasonable
-Welcome to point out
+The components here may not make sense,
+Some of them are my personal exploration of ideas,
+If you see something unreasonable,
+Welcome to point out.
+12/24/2019:
+Now let's try a new way of writing——typescript,
+But vuex and vue-router hasn't used it yet,
+We will consider using it in the next step.

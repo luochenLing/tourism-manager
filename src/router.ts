@@ -20,5 +20,9 @@ export default new Router({
     {path:'/travel',component:Travel}, 
     {path:'/travel/travelList',component:TravelList},
     {path:'/travel/travelInfo',component:TravelInfo},
-  ]
+  ],
+  // //滚动行为：期望滚动到哪个的位置
+  // scrollBehavior(to,from,savedPosition){
+  //   console.log(to)
+  // }
 })

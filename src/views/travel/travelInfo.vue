@@ -27,7 +27,7 @@
       <div class="tag">上门接|上门接|上门接</div>
     </section>
     <section class="discount">
-      <div class="coupon" @click="showCouponPopup">
+      <div class="coupon" @click="showPopup('coupon')">
         <span class="coupon-title">
           领券
         </span>
@@ -38,20 +38,7 @@
           <span class="coupon-item">满50000反1000</span>
         </div>
       </div>
-
-      <van-popup
-        class="coupon-popup"
-        v-model="showCoupon"
-        position="bottom"
-        round
-        closeable
-        :style="{ height: '80%' }"
-      >
-        <coupon :list="couponList" />
-        <!-- <activity :list="activityList" /> -->
-      </van-popup>
-
-      <div class="activity" @click="showActivityPopup">
+      <div class="activity" @click="showPopup('activity')">
         <span class="activity-title">
           活动
         </span>
@@ -61,7 +48,35 @@
           <span class="activity-item">支付优惠</span>
         </div>
       </div>
+      <van-popup
+        class="coupon-popup"
+        v-model="showCoupon"
+        position="bottom"
+        round
+        closeable
+      >
+        <coupon
+          :list="couponList"
+          v-show="activePopup == 'coupon'"
+          @receiveCoupon="receiveCoupon"
+        />
+        <activity :list="activityList" v-show="activePopup == 'activity'" />
+      </van-popup>
     </section>
+    <ul class="head-tab">
+      <li :class="tabIndex == 0 ? 'active' : ''" @click.stop="anchorLink(0)">
+        产品特色
+      </li>
+      <li :class="tabIndex == 1 ? 'active' : ''" @click.stop="anchorLink(1)">
+        推荐行程
+      </li>
+      <li :class="tabIndex == 2 ? 'active' : ''" @click.stop="anchorLink(2)">
+        费用说明
+      </li>
+      <li :class="tabIndex == 3 ? 'active' : ''" @click.stop="anchorLink(3)">
+        预订须知
+      </li>
+    </ul>
     <section class="feature">
       <div class="feature-title">产品特色</div>
       <div class="feature-content">
@@ -84,12 +99,33 @@
         ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
         · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
       </div>
     </section>
     <section class="notice">
       <div class="notice-title">预订须知</div>
       <div class="notice-content">
         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
+        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
+         ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
         · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
       </div>
@@ -117,7 +153,7 @@
     ></van-icon>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" scoped>
 import { Vue } from "vue-property-decorator";
 import { Swipe, SwipeItem, Icon, Popup } from "vant";
 import RecommendProList from "./components/recommendProList.vue";
@@ -134,32 +170,6 @@ export default Vue.extend({
     Coupon,
     Activity
   },
-  methods: {
-    goBack() {
-      this.$router.back();
-    },
-    showCouponPopup() {
-      this.showCoupon = true;
-    },
-    showActivityPopup() {
-      this.showActivity = true;
-    },
-    getTopBtn() {
-      let scrollTop =
-        document.documentElement.scrollTop ||
-        window.pageYOffset ||
-        document.body.scrollTop;
-      if (scrollTop > 200) {
-        this.showTopBtn = true;
-      } else {
-        this.showTopBtn = false;
-      }
-    },
-    goTop() {
-      let $dom = document.documentElement || document.body;
-      $dom.scrollTop = 0;
-    }
-  },
   data() {
     return {
       images: [
@@ -167,9 +177,11 @@ export default Vue.extend({
         "/images/home/swipper02.jpg",
         "/images/home/swipper03.jpg"
       ],
+      activePopup: "",
       showCoupon: false,
-      showActivity: false,
       showTopBtn: false,
+      tabIndex: 0,
+      tabHeight: 46,
       //推荐列表
       recommentList: [
         {
@@ -262,6 +274,7 @@ export default Vue.extend({
           price: "300",
           startTime: "2019-12-1",
           endTime: "2019-12-31",
+          isReceive: false,
           rule:
             "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
           explain:
@@ -273,6 +286,7 @@ export default Vue.extend({
           price: "500",
           startTime: "2019-11-1",
           endTime: "2019-12-22",
+          isReceive: true,
           rule:
             "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
           explain: "华夏小羊肖恩亲子卡金卡每满2000减100 每单最高减500元"
@@ -283,6 +297,7 @@ export default Vue.extend({
           price: "300",
           startTime: "2020-1-1",
           endTime: "2020-1-31",
+          isReceive: true,
           rule:
             "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
           explain: "【12月】光大信用卡“魅力海南旅游节”海南国内长线满2000减300"
@@ -293,6 +308,7 @@ export default Vue.extend({
           price: "50",
           startTime: "2019-12-12",
           endTime: "2019-12-21",
+          isReceive: false,
           rule:
             "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
           explain: "江苏银行信用卡周周减-满300立减50元"
@@ -303,6 +319,7 @@ export default Vue.extend({
           price: "100",
           startTime: "2019-10-1",
           endTime: "2019-12-31",
+          isReceive: true,
           rule:
             "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
           explain: "【交行普惠活动】交行信用卡国内产品订单满3000减100元"
@@ -310,9 +327,98 @@ export default Vue.extend({
       ]
     };
   },
+  methods: {
+    goBack() {
+      this.$router.back();
+    },
+    showPopup(tag: string) {
+      this.showCoupon = true;
+      this.activePopup = tag;
+    },
+    scrollListener() {
+      this.getTabByScrollPosition(document.documentElement.scrollTop);
+      this.getTopBtn();
+    },
+    //获取置顶按钮
+    getTopBtn() {
+      let scrollTop =
+        document.documentElement.scrollTop ||
+        window.pageYOffset ||
+        document.body.scrollTop;
+      if (scrollTop > 200) {
+        this.showTopBtn = true;
+      } else {
+        this.showTopBtn = false;
+      }
+    },
+    //根据滚动条标记选中Tab
+    getTabByScrollPosition(scrollTop: number) {
+      let featureTop = this.getDom(".feature").offsetTop-this.tabHeight;
+      let featureBottom =
+        this.getDom(".feature").offsetTop +
+        this.getDom(".feature").offsetHeight-this.tabHeight;
+      let recommendTop = this.getDom(".recommend").offsetTop-this.tabHeight;
+      let recommendBottom =
+        this.getDom(".recommend").offsetTop +
+        this.getDom(".recommend").offsetHeight-this.tabHeight;
+      let explainTop = this.getDom(".explain").offsetTop-this.tabHeight;
+      let explainBottom =
+        this.getDom(".explain").offsetTop +
+        this.getDom(".explain").offsetHeight-this.tabHeight;
+      let noticeTop = this.getDom(".notice").offsetTop-this.tabHeight;
+      let noticeBottom =
+        this.getDom(".notice").offsetTop + this.getDom(".notice").offsetHeight-this.tabHeight;
+      if (scrollTop >= featureTop && scrollTop <= featureBottom) {
+        this.tabIndex = 0;
+      } else if (scrollTop >= recommendTop && scrollTop <= recommendBottom) {
+        this.tabIndex = 1;
+      } else if (scrollTop >= explainTop && scrollTop <= explainBottom) {
+        this.tabIndex = 2;
+      } else if (scrollTop >= noticeTop && scrollTop <= noticeBottom) {
+        this.tabIndex = 3;
+      }
+    },
+    goTop() {
+      let $dom = document.documentElement || document.body;
+      $dom.scrollTop = 0;
+    },
+    anchorLink(index: number) {
+      this.tabIndex = index;
+      let height = 0;
+      switch (index) {
+        case 0:
+          height = this.getDom(".feature").offsetTop-this.tabHeight;
+          break;
+        case 1:
+          height = this.getDom(".recommend").offsetTop-this.tabHeight;
+          break;
+        case 2:
+          height = this.getDom(".explain").offsetTop-this.tabHeight;
+          break;
+        case 3:
+          height = this.getDom(".notice").offsetTop-this.tabHeight;
+          break;
+      }
+      if (height <= this.tabHeight) {
+        return;
+      }
+      document.documentElement.scrollTo(0, height);
+    },
+    //领取优惠券
+    receiveCoupon(index: number, flag: boolean) {
+      console.log(flag, index);
+      this.couponList[index].isReceive = flag;
+    },
+    getDom(el: string): HTMLElement {
+      return <HTMLElement>document.querySelector(el);
+    }
+  },
   mounted() {
-    window.addEventListener("scroll", this.getTopBtn);
-  }
+    document.addEventListener("scroll", this.scrollListener,false);
+  },
+  beforeDestroy() {
+    document.removeEventListener("scroll", this.scrollListener);
+  },
 });
 </script>
 
@@ -325,6 +431,7 @@ export default Vue.extend({
     position: relative;
     height: 180px;
     .index-swiper {
+      width: 100%;
       img {
         width: 100%;
         height: 180px;
@@ -399,7 +506,24 @@ export default Vue.extend({
       margin-top: 15px;
     }
   }
-
+  .head-tab {
+    display: flex;
+    background: #fff;
+    height: 46px;
+    margin: 10px 0 -1px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    justify-content: space-evenly;
+    li {
+      line-height: 46px;
+      font-size: 15px;
+    }
+    .active {
+      color: #2dbb55;
+      border-bottom: 2px solid #2dbb55;
+    }
+  }
   .discount {
     margin-top: 10px;
     background-color: #fff;
@@ -468,6 +592,16 @@ export default Vue.extend({
         }
       }
     }
+    .coupon-popup {
+      overflow: hidden;
+      height: 80%;
+      &::before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 40px;
+      }
+    }
   }
 
   .feature,
@@ -487,8 +621,8 @@ export default Vue.extend({
       font-size: 16px;
       font-weight: 600;
       height: 20px;
-      padding-left: 10px;
       margin-bottom: 10px;
+      padding-left: 10px;
       &::before {
         content: "";
         position: absolute;
@@ -522,6 +656,20 @@ export default Vue.extend({
         background: #f80;
       }
     }
+
+    .recommend-content,
+    .feature-content,
+    .explain-content,
+    .notice-content {
+      padding: 5px 0;
+      line-height: 18px;
+    }
+  }
+  .feature {
+    margin-top: 0;
+  }
+  .pro-recommend {
+    padding-bottom: 5px;
   }
 
   .pro-info-footer {
@@ -531,7 +679,7 @@ export default Vue.extend({
     height: 50px;
     background: #fff;
     border-top: 1px solid #d4d4d4;
-    z-index: 1;
+    z-index: 11;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -564,10 +712,9 @@ export default Vue.extend({
 
   .top-btn {
     position: fixed;
-    bottom: 80px;
-    right: 8px;
+    bottom: 120px;
+    right: 10px;
     border-radius: 100%;
-    // transform: rotate(180deg);
     font-size: 40px;
     background: #fff;
     overflow: hidden;
