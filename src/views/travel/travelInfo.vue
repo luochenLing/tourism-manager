@@ -98,14 +98,11 @@
       <div class="explain-content">
         ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
         · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
       </div>
@@ -115,17 +112,13 @@
       <div class="notice-content">
         ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-         ·
+        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
         在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
         · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
       </div>
@@ -336,7 +329,10 @@ export default Vue.extend({
       this.activePopup = tag;
     },
     scrollListener() {
-      this.getTabByScrollPosition(document.documentElement.scrollTop);
+      let scrollTop =
+        document.documentElement.scrollTop ||
+        document.body.scrollTop; 
+      this.getTabByScrollPosition(scrollTop);
       this.getTopBtn();
     },
     //获取置顶按钮
@@ -353,21 +349,26 @@ export default Vue.extend({
     },
     //根据滚动条标记选中Tab
     getTabByScrollPosition(scrollTop: number) {
-      let featureTop = this.getDom(".feature").offsetTop-this.tabHeight;
+      let featureTop = this.getDom(".feature").offsetTop - this.tabHeight;
       let featureBottom =
         this.getDom(".feature").offsetTop +
-        this.getDom(".feature").offsetHeight-this.tabHeight;
-      let recommendTop = this.getDom(".recommend").offsetTop-this.tabHeight;
+        this.getDom(".feature").offsetHeight -
+        this.tabHeight;
+      let recommendTop = this.getDom(".recommend").offsetTop - this.tabHeight;
       let recommendBottom =
         this.getDom(".recommend").offsetTop +
-        this.getDom(".recommend").offsetHeight-this.tabHeight;
-      let explainTop = this.getDom(".explain").offsetTop-this.tabHeight;
+        this.getDom(".recommend").offsetHeight -
+        this.tabHeight;
+      let explainTop = this.getDom(".explain").offsetTop - this.tabHeight;
       let explainBottom =
         this.getDom(".explain").offsetTop +
-        this.getDom(".explain").offsetHeight-this.tabHeight;
-      let noticeTop = this.getDom(".notice").offsetTop-this.tabHeight;
+        this.getDom(".explain").offsetHeight -
+        this.tabHeight;
+      let noticeTop = this.getDom(".notice").offsetTop - this.tabHeight;
       let noticeBottom =
-        this.getDom(".notice").offsetTop + this.getDom(".notice").offsetHeight-this.tabHeight;
+        this.getDom(".notice").offsetTop +
+        this.getDom(".notice").offsetHeight -
+        this.tabHeight;
       if (scrollTop >= featureTop && scrollTop <= featureBottom) {
         this.tabIndex = 0;
       } else if (scrollTop >= recommendTop && scrollTop <= recommendBottom) {
@@ -379,34 +380,36 @@ export default Vue.extend({
       }
     },
     goTop() {
-      let $dom = document.documentElement || document.body;
-      $dom.scrollTop = 0;
+        document.documentElement.scrollTop=document.body.scrollTop=0
+      //   window.pageYOffset ||
+      //   document.body.scrollTop;
+      //   alert(scrollTop);
+      // scrollTop = 0;
     },
     anchorLink(index: number) {
       this.tabIndex = index;
       let height = 0;
       switch (index) {
         case 0:
-          height = this.getDom(".feature").offsetTop-this.tabHeight;
+          height = this.getDom(".feature").offsetTop - this.tabHeight;
           break;
         case 1:
-          height = this.getDom(".recommend").offsetTop-this.tabHeight;
+          height = this.getDom(".recommend").offsetTop - this.tabHeight;
           break;
         case 2:
-          height = this.getDom(".explain").offsetTop-this.tabHeight;
+          height = this.getDom(".explain").offsetTop - this.tabHeight;
           break;
         case 3:
-          height = this.getDom(".notice").offsetTop-this.tabHeight;
+          height = this.getDom(".notice").offsetTop - this.tabHeight;
           break;
       }
       if (height <= this.tabHeight) {
         return;
       }
-      document.documentElement.scrollTo(0, height);
+      document.documentElement.scrollTop = document.body.scrollTop = height;
     },
     //领取优惠券
     receiveCoupon(index: number, flag: boolean) {
-      console.log(flag, index);
       this.couponList[index].isReceive = flag;
     },
     getDom(el: string): HTMLElement {
@@ -414,11 +417,11 @@ export default Vue.extend({
     }
   },
   mounted() {
-    document.addEventListener("scroll", this.scrollListener,false);
+    window.addEventListener("scroll", this.scrollListener, false);
   },
   beforeDestroy() {
-    document.removeEventListener("scroll", this.scrollListener);
-  },
+    window.removeEventListener("scroll", this.scrollListener);
+  }
 });
 </script>
 
@@ -719,6 +722,7 @@ export default Vue.extend({
     background: #fff;
     overflow: hidden;
     color: rgba(76, 91, 109, 0.9);
+    z-index: 999;
   }
 }
 
