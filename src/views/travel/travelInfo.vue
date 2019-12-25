@@ -138,30 +138,27 @@
       </div>
       <div class="reserve">立即预定</div>
     </div>
-    <van-icon
-      class="top-btn"
-      name="upgrade"
-      @click="goTop"
-      v-show="showTopBtn"
-    ></van-icon>
+    <top-icon></top-icon>
   </div>
 </template>
 <script lang="ts" scoped>
 import { Vue } from "vue-property-decorator";
-import { Swipe, SwipeItem, Icon, Popup } from "vant";
+import { Swipe, SwipeItem, Popup,Icon } from "vant";
 import RecommendProList from "./components/recommendProList.vue";
 import Coupon from "./components/coupon.vue";
 import Activity from "./components/activity.vue";
+import topIcon from '@/common/components/topIcon.vue'
 export default Vue.extend({
   name: "TravelInfo",
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    [Icon.name]: Icon,
     [Popup.name]: Popup,
+    [Icon.name]: Icon,
     RecommendProList,
     Coupon,
-    Activity
+    Activity,
+    topIcon
   },
   data() {
     return {
@@ -379,13 +376,7 @@ export default Vue.extend({
         this.tabIndex = 3;
       }
     },
-    goTop() {
-        document.documentElement.scrollTop=document.body.scrollTop=0
-      //   window.pageYOffset ||
-      //   document.body.scrollTop;
-      //   alert(scrollTop);
-      // scrollTop = 0;
-    },
+
     anchorLink(index: number) {
       this.tabIndex = index;
       let height = 0;
@@ -712,18 +703,6 @@ export default Vue.extend({
       font-size: 16px;
       line-height: 50px;
     }
-  }
-
-  .top-btn {
-    position: fixed;
-    bottom: 120px;
-    right: 10px;
-    border-radius: 100%;
-    font-size: 40px;
-    background: #fff;
-    overflow: hidden;
-    color: rgba(76, 91, 109, 0.9);
-    z-index: 999;
   }
 }
 

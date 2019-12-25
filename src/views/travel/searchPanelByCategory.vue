@@ -124,7 +124,7 @@ export default Vue.extend({
     return {
       activeIndex: 0,
       navHeight: 50, //横向标题高度，
-      viewClientHeight: document.documentElement.clientHeight,
+      viewClientHeight:0,
       navList: [
         { text: "国内", id: "0100" },
         { text: "国外", id: "0200" },
@@ -268,10 +268,13 @@ export default Vue.extend({
     this.navHeight = (document.querySelector(
       ".search-banner"
     ) as any).offsetHeight;
-    let height = document.documentElement.clientHeight - this.navHeight;
+    let clientHeight=document.documentElement.clientHeight;
+    this.viewClientHeight=clientHeight;
+    let height = clientHeight - this.navHeight;
     (document.querySelector(
       ".right-count"
     ) as any).style.height = `${height}px`;
   }
+
 });
 </script>
