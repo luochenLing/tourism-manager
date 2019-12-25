@@ -173,210 +173,200 @@
 <script lang="ts">
 import configEnums from "@/globalConfig/configEmuns";
 import NavList from "@/common/components/navList.vue";
-export default {
-  name: "cardList",
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+@Component({
+  name: "CardList",
   components: {
     NavList
-  },
-  data() {
-    return {
-      //当前选中日期
-      curDateNums: [],
-      //当前出行日期
-      curTravelTimes: [],
-      //当前玩乐计划
-      curSpecialList: [],
-      //当前选中的列表标题项
-      viewClientHeight: 0,
-      //选项的UL高度
-      listHeight: 0,
-      //是否显示所有的选项
-      showAllList: [],
-      //选项布局样式
-      lineStyle: {
-        marginRight: 0
-      },
-      //收起时最多显示几个
-      maxShowItem: 6
-    };
-  },
-  props: {
-    list: {
-      default: []
-    }
-  },
-  watch: {
-    list() {
-      let $this: any = this;
-      let $document: any = document;
-      //初始化高度,初始化列表位置
-      $this.$nextTick(() => {
-        $this.listHeight = $document.querySelector(".nav-class").offsetHeight;
-        $document.querySelector(".nav-class").style.transform =
-          "translate3d(0px, 0px, 0px)";
-        $this.$children[0].translateY = 0; //这里如果用props操作子组件的话还要另外加变量也不太好控制，refs现在这个阶段获取不到，使用children可以把移动的位置初始化一下，解决问题
-      });
-    }
-  },
+  }
+})
+class cardList extends Vue {
+  @Prop({ default: [], type: Array }) list!: Array<any>;
+  //当前选中日期
+  curDateNums = [];
+  //当前出行日期
+  curTravelTimes = [];
+  //当前玩乐计划
+  curSpecialList = [];
+  //当前选中的列表标题项
+  viewClientHeight = 0;
+  //选项的UL高度
+  listHeight = 0;
+  //是否显示所有的选项
+  showAllList: Array<any> = [];
+  //选项布局样式
+  lineStyle = {
+    marginRight: 0
+  };
+  //收起时最多显示几个
+  maxShowItem = 6;
+
   mounted() {
-    let $this: any = this;
     //98:弹层的footer和header的高度+外边距之和
     let height =
-      (document as any).querySelector(".card-popup").clientHeight - 98;
-    $this.viewClientHeight = height;
-  },
-  methods: {
-    //是否显示所有信息
-    setShowAll(code: any) {
-      let $document: any = document;
-      let $this: any = this;
-      let idx = $this.showAllList.findIndex((x: any) => x.code == code);
-      if (idx > -1) {
-        $this.showAllList[idx].value = !$this.showAllList[idx].value;
-      } else {
-        let item: object;
-        item = {
-          code: code,
-          value: true
-        };
-        ($this.showAllList as any).push(item);
-      }
-      //伸缩的时候让子组件自适应高度
-      $this.$nextTick(() => {
-        $this.listHeight = $document.querySelector(".nav-class").offsetHeight;
-      });
-    },
-    getShowAll(code: any) {
-      let $this: any = this;
-      let res = $this.showAllList.find((x: any) => x.code == code);
-      if (res) {
-        return res.value;
-      } else {
-        return false;
-      }
-    },
-    checkCurItem(e: any, obj: any) {
-      let $dom = e.target;
-      let $this: any = this;
-      let pCode = $dom.parentNode.dataset.code;
-      switch (pCode) {
-        case configEnums.dateNumList:
-          $this.checkItem(e, $this.curDateNums, obj);
-          break;
-        case configEnums.travelTimeList:
-          $this.checkItem(e, $this.curTravelTimes, obj);
-          break;
-        case configEnums.specialList:
-          $this.checkItem(e, $this.curSpecialList, obj);
-          break;
-      }
-    },
-    checkItem(e: any, arr: any[], obj: any) {
-      let $this: any = this;
-      $this.ArryOption(arr, obj);
-    },
-    //数组的添加删除操作
-    ArryOption(arr: any[], item: any) {
-      let itemIndex = arr.findIndex((v: any) => {
-        return v.code === item.code;
-      });
-      if (arr && itemIndex < 0) {
-        arr.push(item);
-      } else {
-        arr.splice(itemIndex, 1);
-      }
-    },
-    getItemClass(code: string) {
-      let $this: any = this;
-      let texts: any[] = [];
-      let item: any;
-      return $this.getSelArray(code, texts, "code", false);
-    },
-    getSelCondition(code: string) {
-      let $this: any = this;
-      let texts: any[] = [];
-      let item: any;
-      return $this.getSelArray(code, texts, "text", true);
-    },
-    getSelArray(
-      code: string,
-      arr: any[],
-      type: string,
-      haveSplit: boolean = true
-    ) {
-      let item: any;
-      let $this: any = this;
-      switch (code) {
-        case configEnums.dateNumList:
-          this.addSelItem(type, arr, $this.curDateNums);
-          if (haveSplit) {
-            return arr.join("、");
-          } else {
-            return arr;
-          }
-        case configEnums.travelTimeList:
-          this.addSelItem(type, arr, $this.curTravelTimes);
-          if (haveSplit) {
-            return arr.join("、");
-          } else {
-            return arr;
-          }
-        case configEnums.specialList:
-          this.addSelItem(type, arr, $this.curSpecialList);
-          if (haveSplit) {
-            return arr.join("、");
-          } else {
-            return arr;
-          }
-      }
-    },
-    addSelItem(type: string, arr: any[], list: any) {
-      let $this: any;
-      for (let item of list) {
-        if (type == "text") {
-          arr.push(item.text);
-        } else {
-          arr.push(item.code);
-        }
-      }
-    },
-    resetCondition(code: string) {
-      //重置条件
-      let $this: any = this;
-      $this.$refs.dataItem.forEach((item: any) => {
-        item.classList.remove("active");
-      });
-      switch (code) {
-        case configEnums.dateList:
-          $this.curDateNums.splice(0);
-          $this.curTravelTimes.splice(0);
-          break;
-        case configEnums.specialList:
-          $this.curSpecialList.splice(0);
-          break;
-      }
-    },
-    submitCondition(code: string) {
-      //提交确认条件
-      let $this: any = this;
-      let obj = {};
-      switch (code) {
-        case configEnums.dateList:
-          obj = {
-            curDateNums: $this.curDateNums.slice(),
-            curTravelTimes: $this.curTravelTimes.slice()
-          };
-          $this.$store.commit("travelFilterCondition/setCurDateList", obj);
-          break;
-        case configEnums.specialList:
-          obj = {
-            curSpecialList: $this.curSpecialList.slice()
-          };
-          $this.$store.commit("travelFilterCondition/setCurSpecialList", obj);
-          break;
-      }
-      $this.$store.commit("travelFilterCondition/setShowConditionPopup", false);
+      (<HTMLElement>document.querySelector(".card-popup")).clientHeight - 98;
+    this.viewClientHeight = height;
+  }
+  @Watch("list")
+  listChange() {
+    let navClass = <HTMLElement>document.querySelector(".nav-class");
+    //初始化高度,初始化列表位置
+    this.$nextTick(() => {
+      this.listHeight = navClass.offsetHeight;
+      navClass.style.transform = "translate3d(0px, 0px, 0px)";
+      (this.$children[0] as any).translateY = 0; //这里如果用props操作子组件的话还要另外加变量也不太好控制，refs现在这个阶段获取不到，使用children可以把移动的位置初始化一下，解决问题
+    });
+  }
+
+  //是否显示所有信息
+  setShowAll(code: any) {
+    let idx = this.showAllList.findIndex((x: any) => x.code == code);
+    if (idx > -1) {
+      this.showAllList[idx].value = !this.showAllList[idx].value;
+    } else {
+      let item: object;
+      item = {
+        code: code,
+        value: true
+      };
+      this.showAllList.push(item);
+    }
+    //伸缩的时候让子组件自适应高度
+    this.$nextTick(() => {
+      this.listHeight = (<HTMLElement>(
+        document.querySelector(".nav-class")
+      )).offsetHeight;
+    });
+  }
+
+  getShowAll(code: any) {
+    let res = this.showAllList.find((x: any) => x.code == code);
+    if (res) {
+      return res.value;
+    } else {
+      return false;
     }
   }
-};
+
+  checkCurItem(e: any, obj: any) {
+    let $dom = e.target;
+    let pCode = $dom.parentNode.dataset.code;
+    switch (pCode) {
+      case configEnums.dateNumList:
+        this.checkItem(e, this.curDateNums, obj);
+        break;
+      case configEnums.travelTimeList:
+        this.checkItem(e, this.curTravelTimes, obj);
+        break;
+      case configEnums.specialList:
+        this.checkItem(e, this.curSpecialList, obj);
+        break;
+    }
+  }
+
+  checkItem(e: any, arr: any[], obj: any) {
+    this.ArryOption(arr, obj);
+  }
+
+  //数组的添加删除操作
+  ArryOption(arr: any[], item: any) {
+    let itemIndex = arr.findIndex((v: any) => {
+      return v.code === item.code;
+    });
+    if (arr && itemIndex < 0) {
+      arr.push(item);
+    } else {
+      arr.splice(itemIndex, 1);
+    }
+  }
+
+  getItemClass(code: string) {
+    let texts: any[] = [];
+    return this.getSelArray(code, texts, "code", false);
+  }
+
+  getSelCondition(code: string) {
+    let texts: any[] = [];
+    return this.getSelArray(code, texts, "text", true);
+  }
+
+  getSelArray(
+    code: string,
+    arr: any[],
+    type: string,
+    haveSplit: boolean = true
+  ) {
+    switch (code) {
+      case configEnums.dateNumList:
+        this.addSelItem(type, arr, this.curDateNums);
+        if (haveSplit) {
+          return arr.join("、");
+        } else {
+          return arr;
+        }
+      case configEnums.travelTimeList:
+        this.addSelItem(type, arr, this.curTravelTimes);
+        if (haveSplit) {
+          return arr.join("、");
+        } else {
+          return arr;
+        }
+      case configEnums.specialList:
+        this.addSelItem(type, arr, this.curSpecialList);
+        if (haveSplit) {
+          return arr.join("、");
+        } else {
+          return arr;
+        }
+    }
+  }
+
+  addSelItem(type: string, arr: any[], list: any) {
+    for (let item of list) {
+      if (type == "text") {
+        arr.push(item.text);
+      } else {
+        arr.push(item.code);
+      }
+    }
+  }
+
+  resetCondition(code: string) {
+    //重置条件
+    (this.$refs.dataItem as Array<any>).forEach((item: any) => {
+      item.classList.remove("active");
+    });
+    switch (code) {
+      case configEnums.dateList:
+        this.curDateNums.splice(0);
+        this.curTravelTimes.splice(0);
+        break;
+      case configEnums.specialList:
+        this.curSpecialList.splice(0);
+        break;
+    }
+  }
+
+  submitCondition(code: string) {
+    //提交确认条件
+    let obj = {};
+    switch (code) {
+      case configEnums.dateList:
+        obj = {
+          curDateNums: this.curDateNums.slice(),
+          curTravelTimes: this.curTravelTimes.slice()
+        };
+        this.$store.commit("travelFilterCondition/setCurDateList", obj);
+        break;
+      case configEnums.specialList:
+        obj = {
+          curSpecialList: this.curSpecialList.slice()
+        };
+        this.$store.commit("travelFilterCondition/setCurSpecialList", obj);
+        break;
+    }
+    this.$store.commit("travelFilterCondition/setShowConditionPopup", false);
+  }
+}
+export default cardList;
 </script>

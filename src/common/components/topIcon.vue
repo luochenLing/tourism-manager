@@ -12,7 +12,7 @@
     box-shadow: 0 2px 4px #ddd;
     bottom: 20%;
     right: 1%;
-    z-index: 99;
+    z-index: 999;
     &::after{
       content: '';
       background: url('/images/common/go-top.png') no-repeat;
@@ -33,7 +33,7 @@ export default Vue.extend({
     name:'TopIcon',
     methods: {
         goTop(){
-            document.documentElement.scrollTop=0
+            document.documentElement.scrollTop=document.body.scrollTop=0
         }
     },
 })

@@ -117,92 +117,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue } from "vue-property-decorator";
-import { Swipe, SwipeItem, Icon, Dialog } from "vant";
+import { Vue, Component } from "vue-property-decorator";
+import { Swipe, SwipeItem, Icon, Toast } from "vant";
 import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
 import RecommendProList from "./components/recommendProList.vue";
-
-export default Vue.extend({
+Vue.use(Toast);
+@Component({
   name: "Travel",
-  data() {
-    return {
-      proList: [
-        {
-          id: "1",
-          title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
-          description:
-            "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
-          priceNum: "3296",
-          priceUint: "￥",
-          score: "4.9",
-          pCount: "1.9万",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "杭州",
-          imgUrl: "/images/travel/territory1.jpg",
-          category: "0"
-        },
-        {
-          id: "2",
-          title: "华东五市-苏州园林-杭州-乌镇火车5日游",
-          description:
-            "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
-          priceNum: "1780",
-          priceUint: "￥",
-          score: "4.9",
-          pCount: "4009",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "杭州",
-          imgUrl: "/images/travel/territory2.jpg",
-          category: "1"
-        },
-        {
-          id: "3",
-          title: "杭州-乌镇-西塘高铁动车3日游",
-          description:
-            "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-          priceNum: "665",
-          priceUint: "￥",
-          score: "9.0",
-          pCount: "128",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "嘉兴",
-          imgUrl: "/images/travel/territory3.jpg",
-          category: "1"
-        }
-      ],
-      curProList: [],
-      specialList: [
-        {
-          id: "1",
-          title: "希腊一地8日游",
-          description:
-            "广州往返，圣托里尼，蓝白世界，探索古雅典文明，B线春节班期升级悬崖酒店羊排餐卫城伊亚日落，C线特价雅典自由活动",
-          category: "跟团游",
-          priceUnit: "￥",
-          priceNum: "8230",
-          imgUrl: "/images/travel/special1.jpg"
-        },
-        {
-          id: "2",
-          title: "泰国8日游",
-          description:
-            "爸妈放心游/优选航班/泰段0购物0脱团/7晚五星酒店/日游沙美岛/舌尖美食/一次游三国/南京往返",
-          category: "跟团游",
-          priceUnit: "￥",
-          priceNum: "5480",
-          imgUrl: "/images/travel/special2.jpg"
-        }
-      ],
-      curCategory: 1
-    };
-  },
-  created() {},
-  beforeMount() {
-    (this.curProList as Array<any>) = this.proList.filter(
-      item => item.category == "1"
-    );
-  },
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
@@ -210,40 +132,112 @@ export default Vue.extend({
     NavBar,
     ProductList,
     RecommendProList
-  },
-  methods: {
-    searchPanelByCategory() {
-      this.$router.push("/searchPanelByCategory");
+  }
+})
+class travel extends Vue {
+  proList = [
+    {
+      id: "1",
+      title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
+      description:
+        "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
+      priceNum: "3296",
+      priceUint: "￥",
+      score: "4.9",
+      pCount: "1.9万",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "杭州",
+      imgUrl: "/images/travel/territory1.jpg",
+      category: "0"
     },
-    //根据类别显示数据
-    getListByCategory(curNum: number) {
-      this.curCategory = curNum;
-      switch (curNum) {
-        case 1:
-          (this.curProList as Array<any>) = this.proList.filter(
-            item => item.category == "1"
-          );
-          break;
-        case 2:
-          (this.curProList as Array<any>) = this.proList.filter(
-            item => item.category == "0"
-          );
-          break;
-        case 3:
-          Dialog.alert({
-            title: "提示",
-            message: "正在建设中"
-          });
-          break;
-      }
+    {
+      id: "2",
+      title: "华东五市-苏州园林-杭州-乌镇火车5日游",
+      description:
+        "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
+      priceNum: "1780",
+      priceUint: "￥",
+      score: "4.9",
+      pCount: "4009",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "杭州",
+      imgUrl: "/images/travel/territory2.jpg",
+      category: "1"
+    },
+    {
+      id: "3",
+      title: "杭州-乌镇-西塘高铁动车3日游",
+      description:
+        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
+      priceNum: "665",
+      priceUint: "￥",
+      score: "9.0",
+      pCount: "128",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "嘉兴",
+      imgUrl: "/images/travel/territory3.jpg",
+      category: "1"
+    }
+  ];
+
+  curProList: Array<any> = [];
+
+  specialList = [
+    {
+      id: "1",
+      title: "希腊一地8日游",
+      description:
+        "广州往返，圣托里尼，蓝白世界，探索古雅典文明，B线春节班期升级悬崖酒店羊排餐卫城伊亚日落，C线特价雅典自由活动",
+      category: "跟团游",
+      priceUnit: "￥",
+      priceNum: "8230",
+      imgUrl: "/images/travel/special1.jpg"
+    },
+    {
+      id: "2",
+      title: "泰国8日游",
+      description:
+        "爸妈放心游/优选航班/泰段0购物0脱团/7晚五星酒店/日游沙美岛/舌尖美食/一次游三国/南京往返",
+      category: "跟团游",
+      priceUnit: "￥",
+      priceNum: "5480",
+      imgUrl: "/images/travel/special2.jpg"
+    }
+  ];
+
+  curCategory = 1;
+
+  created() {
+    this.curProList = this.proList.filter(item => item.category == "1");
+  }
+
+  searchPanelByCategory() {
+    this.$router.push("/searchPanelByCategory");
+  }
+
+  //根据类别显示数据
+  getListByCategory(curNum: number) {
+    this.curCategory = curNum;
+    switch (curNum) {
+      case 1:
+        this.curProList = this.proList.filter(item => item.category == "1");
+        break;
+      case 2:
+        this.curProList = this.proList.filter(item => item.category == "0");
+        break;
+      case 3:
+        Toast("正在建设中");
+        break;
     }
   }
-});
+}
+
+export default travel;
 </script>
 
 <style lang="scss" scoped>
-a{
-  color:#000;
+a {
+  color: #000;
 }
 .travel-layout {
   background-color: #f0f0f0;

@@ -14,15 +14,15 @@
   </ul>
 </template>
 <script lang="ts">
-export default {
-  name: "RecommendProList",
-  props: {
-    list: {
-      type: Array,
-      default: []
-    }
-  }
-};
+import { Vue, Component, Prop } from "vue-property-decorator";
+@Component({
+  name: "RecommendProList"
+})
+class recommendProList extends Vue {
+  @Prop({ default: [], type: Array }) list!: Array<any>;
+}
+
+export default recommendProList;
 </script>
 
 <style lang="scss" scoped>

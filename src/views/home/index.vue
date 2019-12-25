@@ -159,35 +159,32 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue } from "vue-property-decorator";
-import { Button, Swipe, SwipeItem, Lazyload } from "vant";
+import { Vue, Component } from "vue-property-decorator";
+import {Swipe, SwipeItem, Lazyload } from "vant";
 import NaveBar from "@/common/components/navBar.vue";
 Vue.use(Lazyload);
-export default Vue.extend({
-  name: "home",
+@Component({
+  name: "Home",
   components: {
-    [Button.name]: Button,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     "nave-bar": NaveBar
-  },
-  data() {
-    return {
-      images: [
-        "images/home/swipper01.jpg",
-        "images/home/swipper02.jpg",
-        "images/home/swipper03.jpg"
-      ]
-    };
-  },
-  created() {},
-  methods: {
-    getSearch() {
-      this.$router.push("/searchPanel");
-    }
   }
-});
+})
+class home extends Vue {
+  images: Array<string> = [
+    "images/home/swipper01.jpg",
+    "images/home/swipper02.jpg",
+    "images/home/swipper03.jpg"
+  ];
+  created() {}
+  getSearch() {
+    this.$router.push("/searchPanel");
+  }
+}
+export default home;
 </script>
+
 <style lang="scss" scoped>
 a:hover {
   color: #551a8b;

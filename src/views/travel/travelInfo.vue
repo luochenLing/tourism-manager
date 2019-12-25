@@ -138,17 +138,18 @@
       </div>
       <div class="reserve">立即预定</div>
     </div>
-    <top-icon></top-icon>
+    <top-icon v-show="showTopBtn"></top-icon>
   </div>
 </template>
+
 <script lang="ts">
-import { Vue } from "vue-property-decorator";
-import { Swipe, SwipeItem, Popup,Icon } from "vant";
+import { Vue, Component } from "vue-property-decorator";
+import { Swipe, SwipeItem, Popup, Icon } from "vant";
 import RecommendProList from "./components/recommendProList.vue";
 import Coupon from "./components/coupon.vue";
 import Activity from "./components/activity.vue";
-import topIcon from '@/common/components/topIcon.vue'
-export default Vue.extend({
+import topIcon from "@/common/components/topIcon.vue";
+@Component({
   name: "TravelInfo",
   components: {
     [Swipe.name]: Swipe,
@@ -159,261 +160,259 @@ export default Vue.extend({
     Coupon,
     Activity,
     topIcon
-  },
-  data() {
-    return {
-      images: [
-        "/images/home/swipper01.jpg",
-        "/images/home/swipper02.jpg",
-        "/images/home/swipper03.jpg"
-      ],
-      activePopup: "",
-      showCoupon: false,
-      showTopBtn: false,
-      tabIndex: 0,
-      tabHeight: 46,
-      //推荐列表
-      recommentList: [
-        {
-          id: "1",
-          title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
-          description:
-            "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
-          priceNum: "3296",
-          priceUint: "￥",
-          score: "4.9",
-          pCount: "1.9万",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "杭州",
-          imgUrl: "/images/travel/territory1.jpg",
-          category: "0"
-        },
-        {
-          id: "2",
-          title: "华东五市-苏州园林-杭州-乌镇火车5日游",
-          description:
-            "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
-          priceNum: "1780",
-          priceUint: "￥",
-          score: "4.9",
-          pCount: "4009",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "杭州",
-          imgUrl: "/images/travel/territory2.jpg",
-          category: "1"
-        },
-        {
-          id: "3",
-          title: "杭州-乌镇-西塘高铁动车3日游",
-          description:
-            "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-          priceNum: "665",
-          priceUint: "￥",
-          score: "9.0",
-          pCount: "128",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "嘉兴",
-          imgUrl: "/images/travel/territory3.jpg",
-          category: "1"
-        }
-      ],
-      //活动列表
-      activityList: [
-        {
-          id: 0,
-          startTime: "2019-1-1",
-          endTime: "2019-1-2",
-          title: "【海南春节预售】提前30天及以上优惠200元/成人",
-          explain:
-            "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
-          tag: "立减优惠"
-        },
-        {
-          id: 1,
-          startTime: "2018-10-1",
-          endTime: "2019-1-2",
-          title: "【多人立减】满6成人立减600/单",
-          explain:
-            "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
-          tag: "立减优惠"
-        },
-        {
-          id: 2,
-          startTime: "2018-11-1",
-          endTime: "2018-12-2",
-          title: "点评返现5元，抵用券20元",
-          explain:
-            "自行于网上下单预订，出游归来后发表点评，每成人返现5元（电话订单除外），返现上限金额为实付金额（包括旅游券）的3%。网上预订，出游归来后发表点评，每位成人返抵用券20元。点评后，请至会员中心查看账户余额。",
-          tag: "点评返现"
-        },
-        {
-          id: 3,
-          startTime: "2019-10-1",
-          endTime: "2020-1-2",
-          title: "邮储银联信用卡最高立减500元/单",
-          explain:
-            "邮储银联信用卡支付立减活动时间：2019.10.26-2020.1.31（每天10:00-23:59）单卡活动期间限参加1次。活动细则：1.本次立减活动名额限5,880单，其中平日活动每日45个名额，周六活动每日150个名额，每日以持卡人使用邮储银联信用卡成功支付的时间先后顺序、先到先得。活动以补贴名额或补贴金额用完的先到时间为限，抢完即止。点击进入“云闪付”的时间必须从每日10点开始，提前点击进入云闪付无法享受此次优惠。如最终支付未显示立减金额，则表示名额已用完。2.立减活动的优惠金额部分不可兑换现金。如在成功支付后，因持卡人原因发生订单退货或订单增减，持卡人应承担因订单退货或订单增减而产生的团费损失。退款金额优先抵扣邮储银联信用卡提供的立减优惠。优惠名额为一次性使用，如已使用优惠名额后退货或订单增减，不可再次享受优惠。",
-          tag: "支付优惠"
-        }
-      ],
-      //优惠券列表
-      couponList: [
-        {
-          id: 0,
-          title: "每2000立减100元（最多300元）",
-          price: "300",
-          startTime: "2019-12-1",
-          endTime: "2019-12-31",
-          isReceive: false,
-          rule:
-            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-          explain:
-            "华夏信用卡分期立减-跟团游/邮轮每满2000元减100元优惠，每单最高减300元"
-        },
-        {
-          id: 1,
-          title: "每2000立减100元（最多500元）",
-          price: "500",
-          startTime: "2019-11-1",
-          endTime: "2019-12-22",
-          isReceive: true,
-          rule:
-            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-          explain: "华夏小羊肖恩亲子卡金卡每满2000减100 每单最高减500元"
-        },
-        {
-          id: 2,
-          title: "每2000立减100元（最多300元）",
-          price: "300",
-          startTime: "2020-1-1",
-          endTime: "2020-1-31",
-          isReceive: true,
-          rule:
-            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-          explain: "【12月】光大信用卡“魅力海南旅游节”海南国内长线满2000减300"
-        },
-        {
-          id: 3,
-          title: "满300元可用",
-          price: "50",
-          startTime: "2019-12-12",
-          endTime: "2019-12-21",
-          isReceive: false,
-          rule:
-            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-          explain: "江苏银行信用卡周周减-满300立减50元"
-        },
-        {
-          id: 4,
-          title: "满3000元可用",
-          price: "100",
-          startTime: "2019-10-1",
-          endTime: "2019-12-31",
-          isReceive: true,
-          rule:
-            "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-          explain: "【交行普惠活动】交行信用卡国内产品订单满3000减100元"
-        }
-      ]
-    };
-  },
-  methods: {
-    goBack() {
-      this.$router.back();
+  }
+})
+class travelInfo extends Vue {
+  images = [
+    "/images/home/swipper01.jpg",
+    "/images/home/swipper02.jpg",
+    "/images/home/swipper03.jpg"
+  ];
+  activePopup = "";
+  showCoupon = false;
+  showTopBtn = false;
+  tabIndex = 0;
+  tabHeight = 46;
+  recommentList = [
+    {
+      id: "1",
+      title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
+      description:
+        "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
+      priceNum: "3296",
+      priceUint: "￥",
+      score: "4.9",
+      pCount: "1.9万",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "杭州",
+      imgUrl: "/images/travel/territory1.jpg",
+      category: "0"
     },
-    showPopup(tag: string) {
-      this.showCoupon = true;
-      this.activePopup = tag;
+    {
+      id: "2",
+      title: "华东五市-苏州园林-杭州-乌镇火车5日游",
+      description:
+        "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
+      priceNum: "1780",
+      priceUint: "￥",
+      score: "4.9",
+      pCount: "4009",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "杭州",
+      imgUrl: "/images/travel/territory2.jpg",
+      category: "1"
     },
-    scrollListener() {
-      let scrollTop =
-        document.documentElement.scrollTop ||
-        document.body.scrollTop; 
-      this.getTabByScrollPosition(scrollTop);
-      this.getTopBtn();
-    },
-    //获取置顶按钮
-    getTopBtn() {
-      let scrollTop =
-        document.documentElement.scrollTop ||
-        window.pageYOffset ||
-        document.body.scrollTop;
-      if (scrollTop > 200) {
-        this.showTopBtn = true;
-      } else {
-        this.showTopBtn = false;
-      }
-    },
-    //根据滚动条标记选中Tab
-    getTabByScrollPosition(scrollTop: number) {
-      let featureTop = this.getDom(".feature").offsetTop - this.tabHeight;
-      let featureBottom =
-        this.getDom(".feature").offsetTop +
-        this.getDom(".feature").offsetHeight -
-        this.tabHeight;
-      let recommendTop = this.getDom(".recommend").offsetTop - this.tabHeight;
-      let recommendBottom =
-        this.getDom(".recommend").offsetTop +
-        this.getDom(".recommend").offsetHeight -
-        this.tabHeight;
-      let explainTop = this.getDom(".explain").offsetTop - this.tabHeight;
-      let explainBottom =
-        this.getDom(".explain").offsetTop +
-        this.getDom(".explain").offsetHeight -
-        this.tabHeight;
-      let noticeTop = this.getDom(".notice").offsetTop - this.tabHeight;
-      let noticeBottom =
-        this.getDom(".notice").offsetTop +
-        this.getDom(".notice").offsetHeight -
-        this.tabHeight;
-      if (scrollTop >= featureTop && scrollTop <= featureBottom) {
-        this.tabIndex = 0;
-      } else if (scrollTop >= recommendTop && scrollTop <= recommendBottom) {
-        this.tabIndex = 1;
-      } else if (scrollTop >= explainTop && scrollTop <= explainBottom) {
-        this.tabIndex = 2;
-      } else if (scrollTop >= noticeTop && scrollTop <= noticeBottom) {
-        this.tabIndex = 3;
-      }
-    },
-
-    anchorLink(index: number) {
-      this.tabIndex = index;
-      let height = 0;
-      switch (index) {
-        case 0:
-          height = this.getDom(".feature").offsetTop - this.tabHeight;
-          break;
-        case 1:
-          height = this.getDom(".recommend").offsetTop - this.tabHeight;
-          break;
-        case 2:
-          height = this.getDom(".explain").offsetTop - this.tabHeight;
-          break;
-        case 3:
-          height = this.getDom(".notice").offsetTop - this.tabHeight;
-          break;
-      }
-      if (height <= this.tabHeight) {
-        return;
-      }
-      document.documentElement.scrollTop = document.body.scrollTop = height;
-    },
-    //领取优惠券
-    receiveCoupon(index: number, flag: boolean) {
-      this.couponList[index].isReceive = flag;
-    },
-    getDom(el: string): HTMLElement {
-      return <HTMLElement>document.querySelector(el);
+    {
+      id: "3",
+      title: "杭州-乌镇-西塘高铁动车3日游",
+      description:
+        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
+      priceNum: "665",
+      priceUint: "￥",
+      score: "9.0",
+      pCount: "128",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "嘉兴",
+      imgUrl: "/images/travel/territory3.jpg",
+      category: "1"
     }
-  },
+  ];
+  //活动列表
+  activityList = [
+    {
+      id: 0,
+      startTime: "2019-1-1",
+      endTime: "2019-1-2",
+      title: "【海南春节预售】提前30天及以上优惠200元/成人",
+      explain:
+        "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
+      tag: "立减优惠"
+    },
+    {
+      id: 1,
+      startTime: "2018-10-1",
+      endTime: "2019-1-2",
+      title: "【多人立减】满6成人立减600/单",
+      explain:
+        "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
+      tag: "立减优惠"
+    },
+    {
+      id: 2,
+      startTime: "2018-11-1",
+      endTime: "2018-12-2",
+      title: "点评返现5元，抵用券20元",
+      explain:
+        "自行于网上下单预订，出游归来后发表点评，每成人返现5元（电话订单除外），返现上限金额为实付金额（包括旅游券）的3%。网上预订，出游归来后发表点评，每位成人返抵用券20元。点评后，请至会员中心查看账户余额。",
+      tag: "点评返现"
+    },
+    {
+      id: 3,
+      startTime: "2019-10-1",
+      endTime: "2020-1-2",
+      title: "邮储银联信用卡最高立减500元/单",
+      explain:
+        "邮储银联信用卡支付立减活动时间：2019.10.26-2020.1.31（每天10:00-23:59）单卡活动期间限参加1次。活动细则：1.本次立减活动名额限5,880单，其中平日活动每日45个名额，周六活动每日150个名额，每日以持卡人使用邮储银联信用卡成功支付的时间先后顺序、先到先得。活动以补贴名额或补贴金额用完的先到时间为限，抢完即止。点击进入“云闪付”的时间必须从每日10点开始，提前点击进入云闪付无法享受此次优惠。如最终支付未显示立减金额，则表示名额已用完。2.立减活动的优惠金额部分不可兑换现金。如在成功支付后，因持卡人原因发生订单退货或订单增减，持卡人应承担因订单退货或订单增减而产生的团费损失。退款金额优先抵扣邮储银联信用卡提供的立减优惠。优惠名额为一次性使用，如已使用优惠名额后退货或订单增减，不可再次享受优惠。",
+      tag: "支付优惠"
+    }
+  ];
+  //优惠券列表
+  couponList = [
+    {
+      id: 0,
+      title: "每2000立减100元（最多300元）",
+      price: "300",
+      startTime: "2019-12-1",
+      endTime: "2019-12-31",
+      isReceive: false,
+      rule:
+        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+      explain:
+        "华夏信用卡分期立减-跟团游/邮轮每满2000元减100元优惠，每单最高减300元"
+    },
+    {
+      id: 1,
+      title: "每2000立减100元（最多500元）",
+      price: "500",
+      startTime: "2019-11-1",
+      endTime: "2019-12-22",
+      isReceive: true,
+      rule:
+        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+      explain: "华夏小羊肖恩亲子卡金卡每满2000减100 每单最高减500元"
+    },
+    {
+      id: 2,
+      title: "每2000立减100元（最多300元）",
+      price: "300",
+      startTime: "2020-1-1",
+      endTime: "2020-1-31",
+      isReceive: true,
+      rule:
+        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+      explain: "【12月】光大信用卡“魅力海南旅游节”海南国内长线满2000减300"
+    },
+    {
+      id: 3,
+      title: "满300元可用",
+      price: "50",
+      startTime: "2019-12-12",
+      endTime: "2019-12-21",
+      isReceive: false,
+      rule:
+        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+      explain: "江苏银行信用卡周周减-满300立减50元"
+    },
+    {
+      id: 4,
+      title: "满3000元可用",
+      price: "100",
+      startTime: "2019-10-1",
+      endTime: "2019-12-31",
+      isReceive: true,
+      rule:
+        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
+      explain: "【交行普惠活动】交行信用卡国内产品订单满3000减100元"
+    }
+  ];
   mounted() {
     window.addEventListener("scroll", this.scrollListener, false);
-  },
-  beforeDestroy() {
+  }
+
+  destroyed() {
     window.removeEventListener("scroll", this.scrollListener);
   }
-});
+
+  goBack() {
+    this.$router.back();
+  }
+  showPopup(tag: string) {
+    this.showCoupon = true;
+    this.activePopup = tag;
+  }
+  scrollListener() {
+    let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    this.getTabByScrollPosition(scrollTop);
+    this.getTopBtn();
+  }
+  //获取置顶按钮
+  getTopBtn() {
+    let scrollTop =
+      document.documentElement.scrollTop ||
+      window.pageYOffset ||
+      document.body.scrollTop;
+    if (scrollTop > 200) {
+      this.showTopBtn = true;
+    } else {
+      this.showTopBtn = false;
+    }
+  }
+  //根据滚动条标记选中Tab
+  getTabByScrollPosition(scrollTop: number) {
+    let featureTop = this.getDom(".feature").offsetTop - this.tabHeight;
+    let featureBottom =
+      this.getDom(".feature").offsetTop +
+      this.getDom(".feature").offsetHeight -
+      this.tabHeight;
+    let recommendTop = this.getDom(".recommend").offsetTop - this.tabHeight;
+    let recommendBottom =
+      this.getDom(".recommend").offsetTop +
+      this.getDom(".recommend").offsetHeight -
+      this.tabHeight;
+    let explainTop = this.getDom(".explain").offsetTop - this.tabHeight;
+    let explainBottom =
+      this.getDom(".explain").offsetTop +
+      this.getDom(".explain").offsetHeight -
+      this.tabHeight;
+    let noticeTop = this.getDom(".notice").offsetTop - this.tabHeight;
+    let noticeBottom =
+      this.getDom(".notice").offsetTop +
+      this.getDom(".notice").offsetHeight -
+      this.tabHeight;
+    if (scrollTop >= featureTop && scrollTop <= featureBottom) {
+      this.tabIndex = 0;
+    } else if (scrollTop >= recommendTop && scrollTop <= recommendBottom) {
+      this.tabIndex = 1;
+    } else if (scrollTop >= explainTop && scrollTop <= explainBottom) {
+      this.tabIndex = 2;
+    } else if (scrollTop >= noticeTop && scrollTop <= noticeBottom) {
+      this.tabIndex = 3;
+    }
+  }
+
+  anchorLink(index: number) {
+    this.tabIndex = index;
+    let height = 0;
+    switch (index) {
+      case 0:
+        height = this.getDom(".feature").offsetTop - this.tabHeight;
+        break;
+      case 1:
+        height = this.getDom(".recommend").offsetTop - this.tabHeight;
+        break;
+      case 2:
+        height = this.getDom(".explain").offsetTop - this.tabHeight;
+        break;
+      case 3:
+        height = this.getDom(".notice").offsetTop - this.tabHeight;
+        break;
+    }
+    if (height <= this.tabHeight) {
+      return;
+    }
+    document.documentElement.scrollTop = document.body.scrollTop = height;
+  }
+  //领取优惠券
+  receiveCoupon(index: number, flag: boolean) {
+    this.couponList[index].isReceive = flag;
+  }
+  getDom(el: string): HTMLElement {
+    return <HTMLElement>document.querySelector(el);
+  }
+}
+
+export default travelInfo;
 </script>
 
 <style lang="scss" scoped>

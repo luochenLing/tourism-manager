@@ -22,7 +22,7 @@
           <li
             :class="activeIndex == index ? 'avtice' : ''"
             v-for="(item, index) in navList"
-            @click="getActive(index)"
+            @click.stop="getActive(index)"
             :key="index"
           >
             {{ item.text }}
@@ -35,6 +35,186 @@
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import NavBar from "@/common/components/navBar.vue";
+import ProductList from "./components/productList.vue";
+import NavList from "@/common/components/navList.vue";
+import { Vue, Component } from "vue-property-decorator";
+import { Image, Icon, CouponList } from "vant";
+
+@Component({
+  name: "SearchPanelByCategory",
+  components: {
+    NavBar,
+    [Image.name]: Image,
+    [Icon.name]: Icon,
+    ProductList,
+    NavList
+  }
+})
+class searchPanelByCategory extends Vue {
+  activeIndex = 0;
+  //横向标题高度，
+  navHeight = 50;
+
+  viewClientHeight = 0;
+
+  navList = [
+    { text: "国内", id: "0100" },
+    { text: "国外", id: "0200" },
+    { text: "热门", id: "0300" },
+    { text: "马尔代夫", id: "0400" },
+    { text: "泰国", id: "0500" },
+    { text: "国内1", id: "0100" },
+    { text: "国外1", id: "0200" },
+    { text: "热门1", id: "0300" },
+    { text: "马尔代夫1", id: "0400" },
+    { text: "泰国1", id: "0500" },
+    { text: "国内2", id: "0100" },
+    { text: "国外2", id: "0200" },
+    { text: "热门2", id: "0300" },
+    { text: "马尔代夫2", id: "0400" },
+    { text: "泰国3", id: "0500" },
+    { text: "国内3", id: "0100" },
+    { text: "国外3", id: "0200" },
+    { text: "热门3", id: "0300" },
+    { text: "沙拉把你", id: "0400" },
+    { text: "国内", id: "0100" },
+    { text: "国外", id: "0200" },
+    { text: "热门", id: "0300" },
+    { text: "马尔代夫", id: "0400" },
+    { text: "泰国", id: "0500" },
+    { text: "国内1", id: "0100" },
+    { text: "国外1", id: "0200" },
+    { text: "热门1", id: "0300" },
+    { text: "马尔代夫1", id: "0400" },
+    { text: "泰国1", id: "0500" },
+    { text: "国内2", id: "0100" },
+    { text: "国外2", id: "0200" },
+    { text: "热门2", id: "0300" },
+    { text: "马尔代夫2", id: "0400" },
+    { text: "泰国3", id: "0500" },
+    { text: "国内3", id: "0100" },
+    { text: "国外3", id: "0200" },
+    { text: "热门3", id: "0300" },
+    { text: "马尔代夫3", id: "0400" }
+  ];
+
+  proList = [
+    {
+      id: "1",
+      title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
+      description:
+        "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
+      priceNum: "3296",
+      priceUint: "￥",
+      score: "4.9",
+      pCount: "1.9万",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "杭州",
+      imgUrl: "/images/travel/territory1.jpg",
+      category: "0"
+    },
+    {
+      id: "2",
+      title: "华东五市-苏州园林-杭州-乌镇火车5日游",
+      description:
+        "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
+      priceNum: "1780",
+      priceUint: "￥",
+      score: "4.9",
+      pCount: "4009",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "杭州",
+      imgUrl: "/images/travel/territory2.jpg",
+      category: "1"
+    },
+    {
+      id: "3",
+      title: "杭州-乌镇-西塘高铁动车3日游",
+      description:
+        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
+      priceNum: "665",
+      priceUint: "￥",
+      score: "9.0",
+      pCount: "128",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "嘉兴",
+      imgUrl: "/images/travel/territory3.jpg",
+      category: "1"
+    },
+    {
+      id: "4",
+      title: "杭州-乌镇-西塘高铁动车3日游",
+      description:
+        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
+      priceNum: "665",
+      priceUint: "￥",
+      score: "9.0",
+      pCount: "128",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "嘉兴",
+      imgUrl: "/images/travel/territory3.jpg",
+      category: "1"
+    },
+    {
+      id: "5",
+      title: "杭州-乌镇-西塘高铁动车3日游",
+      description:
+        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
+      priceNum: "665",
+      priceUint: "￥",
+      score: "9.0",
+      pCount: "128",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "嘉兴",
+      imgUrl: "/images/travel/territory3.jpg",
+      category: "1"
+    },
+    {
+      id: "6",
+      title: "杭州-乌镇-西塘高铁动车3日游",
+      description:
+        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
+      priceNum: "665",
+      priceUint: "￥",
+      score: "9.0",
+      pCount: "128",
+      protag: ["上门接", "无自费", "立减"],
+      startingPoint: "嘉兴",
+      imgUrl: "/images/travel/territory3.jpg",
+      category: "1"
+    }
+  ];
+
+  mounted() {
+    this.navHeight = this.getDom(".search-banner")&&this.getDom(".search-banner").offsetHeight||0;
+    let clientHeight = document.documentElement.clientHeight;
+    this.viewClientHeight = clientHeight;
+    let height = clientHeight - this.navHeight;
+    this.getDom(".right-count").style.height = `${height}px`;
+  }
+
+  getDom(el: string): HTMLElement {
+    return <HTMLElement>document.querySelector(el);
+  }
+
+  goHome() {
+    this.$router.push("/home");
+  }
+
+  goSearch() {
+    this.$router.push("/searchPanel");
+  }
+
+  getActive(index: number) {
+    this.activeIndex = index;
+  }
+}
+export default searchPanelByCategory;
+</script>
+
 <style lang="scss" scoped>
 .search-layout {
   .van-sidebar-item--select {
@@ -102,179 +282,3 @@
   user-select: none;
 }
 </style>
-
-<script lang="ts">
-import NavBar from "@/common/components/navBar.vue";
-import ProductList from "./components/productList.vue";
-import NavList from "@/common/components/navList.vue";
-import { Vue } from "vue-property-decorator";
-import { Image, Icon, CouponList } from "vant";
-
-//const inobounce = require('inobounce');
-export default Vue.extend({
-  name: "searchPanelByCategory",
-  components: {
-    NavBar,
-    [Image.name]: Image,
-    [Icon.name]: Icon,
-    ProductList,
-    NavList
-  },
-  data() {
-    return {
-      activeIndex: 0,
-      navHeight: 50, //横向标题高度，
-      viewClientHeight:0,
-      navList: [
-        { text: "国内", id: "0100" },
-        { text: "国外", id: "0200" },
-        { text: "热门", id: "0300" },
-        { text: "马尔代夫", id: "0400" },
-        { text: "泰国", id: "0500" },
-        { text: "国内1", id: "0100" },
-        { text: "国外1", id: "0200" },
-        { text: "热门1", id: "0300" },
-        { text: "马尔代夫1", id: "0400" },
-        { text: "泰国1", id: "0500" },
-        { text: "国内2", id: "0100" },
-        { text: "国外2", id: "0200" },
-        { text: "热门2", id: "0300" },
-        { text: "马尔代夫2", id: "0400" },
-        { text: "泰国3", id: "0500" },
-        { text: "国内3", id: "0100" },
-        { text: "国外3", id: "0200" },
-        { text: "热门3", id: "0300" },
-        { text: "沙拉把你", id: "0400" },
-        { text: "国内", id: "0100" },
-        { text: "国外", id: "0200" },
-        { text: "热门", id: "0300" },
-        { text: "马尔代夫", id: "0400" },
-        { text: "泰国", id: "0500" },
-        { text: "国内1", id: "0100" },
-        { text: "国外1", id: "0200" },
-        { text: "热门1", id: "0300" },
-        { text: "马尔代夫1", id: "0400" },
-        { text: "泰国1", id: "0500" },
-        { text: "国内2", id: "0100" },
-        { text: "国外2", id: "0200" },
-        { text: "热门2", id: "0300" },
-        { text: "马尔代夫2", id: "0400" },
-        { text: "泰国3", id: "0500" },
-        { text: "国内3", id: "0100" },
-        { text: "国外3", id: "0200" },
-        { text: "热门3", id: "0300" },
-        { text: "马尔代夫3", id: "0400" }
-      ],
-      proList: [
-        {
-          id: "1",
-          title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
-          description:
-            "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
-          priceNum: "3296",
-          priceUint: "￥",
-          score: "4.9",
-          pCount: "1.9万",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "杭州",
-          imgUrl: "/images/travel/territory1.jpg",
-          category: "0"
-        },
-        {
-          id: "2",
-          title: "华东五市-苏州园林-杭州-乌镇火车5日游",
-          description:
-            "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
-          priceNum: "1780",
-          priceUint: "￥",
-          score: "4.9",
-          pCount: "4009",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "杭州",
-          imgUrl: "/images/travel/territory2.jpg",
-          category: "1"
-        },
-        {
-          id: "3",
-          title: "杭州-乌镇-西塘高铁动车3日游",
-          description:
-            "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-          priceNum: "665",
-          priceUint: "￥",
-          score: "9.0",
-          pCount: "128",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "嘉兴",
-          imgUrl: "/images/travel/territory3.jpg",
-          category: "1"
-        },
-        {
-          id: "4",
-          title: "杭州-乌镇-西塘高铁动车3日游",
-          description:
-            "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-          priceNum: "665",
-          priceUint: "￥",
-          score: "9.0",
-          pCount: "128",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "嘉兴",
-          imgUrl: "/images/travel/territory3.jpg",
-          category: "1"
-        },
-        {
-          id: "5",
-          title: "杭州-乌镇-西塘高铁动车3日游",
-          description:
-            "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-          priceNum: "665",
-          priceUint: "￥",
-          score: "9.0",
-          pCount: "128",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "嘉兴",
-          imgUrl: "/images/travel/territory3.jpg",
-          category: "1"
-        },
-        {
-          id: "6",
-          title: "杭州-乌镇-西塘高铁动车3日游",
-          description:
-            "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-          priceNum: "665",
-          priceUint: "￥",
-          score: "9.0",
-          pCount: "128",
-          protag: ["上门接", "无自费", "立减"],
-          startingPoint: "嘉兴",
-          imgUrl: "/images/travel/territory3.jpg",
-          category: "1"
-        }
-      ]
-    };
-  },
-  methods: {
-    goHome() {
-      this.$router.push("/home");
-    },
-    goSearch() {
-      this.$router.push("/searchPanel");
-    },
-    getActive(index: number) {
-      (this as any).activeIndex = index;
-    }
-  },
-  mounted() {
-    this.navHeight = (document.querySelector(
-      ".search-banner"
-    ) as any).offsetHeight;
-    let clientHeight=document.documentElement.clientHeight;
-    this.viewClientHeight=clientHeight;
-    let height = clientHeight - this.navHeight;
-    (document.querySelector(
-      ".right-count"
-    ) as any).style.height = `${height}px`;
-  }
-
-});
-</script>

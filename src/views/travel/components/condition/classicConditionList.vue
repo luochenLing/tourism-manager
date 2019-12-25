@@ -32,34 +32,29 @@
 
 <script lang="ts">
 import configEnums from "@/globalConfig/configEmuns";
-export default {
-  name: "classicConditionList",
-  props: {
-    list: {
-      default: []
-    }
-  },
+import { Vue, Component, Prop } from "vue-property-decorator";
+@Component({
+  name: "ClassicConditionList"
+})
+class classicConditionList extends Vue {
+  @Prop({ default: [], type: Array }) list!: {recommendList:Array<any>};
+  activeIndex = 0;
 
-  data() {
-    return {
-      activeIndex: 0
-    };
-  },
-  methods: {
-    getList() {
-      let recommendList = (this as any).list.recommendList;
-      return recommendList;
-    },
-    //获取到当前选中项的值并且设置选中状态
-    getSelect(e: any, index: number) {
-      let $this: any = this;
-      $this.activeIndex = index;
-      let obj = {
-        text: e.target.innerText,
-        code: e.target.dataset.code,
-      };
-      $this.$store.commit("travelFilterCondition/setCurRecommend", obj);
-    }
+  getList() {
+    let recommendList = this.list.recommendList;
+    return recommendList;
   }
-};
+
+  //获取到当前选中项的值并且设置选中状态
+  getSelect(e: any, index: number) {
+    this.activeIndex = index;
+    let obj = {
+      text: e.target.innerText,
+      code: e.target.dataset.code
+    };
+    this.$store.commit("travelFilterCondition/setCurRecommend", obj);
+  }
+}
+
+export default classicConditionList;
 </script>

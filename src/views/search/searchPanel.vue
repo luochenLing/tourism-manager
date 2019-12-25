@@ -67,6 +67,96 @@
   </div>
 </template>
 
+<script lang="ts">
+import NavBar from "@/common/components/navBar.vue";
+import { Vue, Component } from "vue-property-decorator";
+import { Icon, Dialog,Toast  } from "vant";
+import Travel from "@/views/travel/controller/travelController";
+import configEmuns from "@/globalConfig/configEmuns";
+Vue.use(Toast);
+@Component({
+  name: "SearchPanel",
+  components: {
+    NavBar,
+    [Icon.name]: Icon
+  },
+  directives: {
+    focus: {
+      //被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于 document 中）
+      inserted: function(el) {
+        el.focus();
+      },
+      //被绑定元素所在的模板更新时调用，而不论绑定值是否变化。通过比较更新前后的绑定值，可以忽略不必要的模板更新
+      update: function(el, { value }) {
+        if (value) {
+          el.focus();
+        }
+      }
+    }
+  }
+})
+class searchPanel extends Vue {
+  condition = "";
+  showClearDom = false;
+  historyList: Array<any> = [];
+  travel = new Travel();
+  mounted() {
+    //历史数据获取
+    let curHistoryList = localStorage.getItem("searchKey");
+    if (curHistoryList) {
+      this.historyList = JSON.parse(curHistoryList);
+    }
+  }
+
+  showClearSearch() {
+    if (this.condition) {
+      this.showClearDom = true;
+    } else {
+      this.showClearDom = false;
+    }
+  }
+
+  //清空条件事件
+  clearCondition() {
+    this.condition = "";
+    this.showClearDom = false;
+  }
+
+  //取消
+  cancel() {
+    this.$router.back();
+  }
+
+  //搜索
+  search() {
+    if (!this.condition) {
+      Toast.fail('条件不能为空');
+      return;
+    }
+
+    var res = this.travel.AddHistory(this.condition);
+    (this.historyList as string[]) = res;
+  }
+
+  //清空
+  clear() {
+    Dialog.confirm({
+      title: "提示",
+      message: "确定清空历史记录吗"
+    })
+      .then(() => {
+        (this.historyList as string[]).splice(0);
+        localStorage.removeItem(configEmuns.searchKey.toString());
+      })
+      .catch(() => {
+        // on cancel
+      });
+  }
+}
+
+export default searchPanel;
+</script>
+
 <style lang="scss" scoped>
 .search-layout {
   .nav-search {
@@ -142,94 +232,3 @@
   }
 }
 </style>
-
-<script lang="ts">
-import NavBar from "@/common/components/navBar.vue";
-import { Vue } from "vue-property-decorator";
-import { Icon, Dialog } from "vant";
-import Travel from "@/views/travel/controller/travelController";
-import configEmuns from "@/globalConfig/configEmuns";
-export default Vue.extend({
-  name: "searchPanel",
-  data() {
-    return {
-      condition: "",
-      showClearDom: false,
-      historyList: []
-    };
-  },
-  components: {
-    NavBar,
-    [Icon.name]: Icon
-  },
-
-  directives: {
-    focus: {
-      inserted: function(el) {
-        el.focus();
-      },
-      update: function(el, { value }) {
-        if (value) {
-          el.focus();
-        }
-      }
-    }
-  },
-  mounted() {
-    //历史数据获取
-    let curHistoryList: any = localStorage.getItem("searchKey");
-    if (curHistoryList) {
-      curHistoryList = JSON.parse(curHistoryList);
-      this.historyList = curHistoryList;
-    }
-  },
-  methods: {
-    //清空输入内容按钮显示
-    showClearSearch() {
-      var $that = this;
-      if ($that.condition) {
-        $that.showClearDom = true;
-      } else {
-        $that.showClearDom = false;
-      }
-    },
-    //清空条件事件
-    clearCondition() {
-      var $that = this;
-      $that.condition = "";
-      $that.showClearDom = false;
-    },
-    //取消
-    cancel() {
-      this.$router.back();
-    },
-    //搜索
-    search() {
-      if (!this.condition) {
-        Dialog.alert({
-          title: "提示",
-          message: "条件不能为空"
-        });
-        return;
-      }
-      var search = new Travel();
-      var res = search.AddHistory(this.condition);
-      (this.historyList as string[]) = res;
-    },
-    //清空
-    clear() {
-      Dialog.confirm({
-        title: "提示",
-        message: "确定清空历史记录吗"
-      })
-        .then(() => {
-          (this.historyList as string[]).splice(0);
-          localStorage.removeItem(configEmuns.searchKey.toString());
-        })
-        .catch(() => {
-          // on cancel
-        });
-    }
-  }
-});
-</script>

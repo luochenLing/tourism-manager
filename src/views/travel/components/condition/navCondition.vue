@@ -14,6 +14,63 @@
   </ul>
 </template>
 
+<script lang="ts">
+import configEnums from "@/globalConfig/configEmuns";
+import { CouponList } from "vant";
+import { Vue, Component, Prop } from "vue-property-decorator";
+
+@Component({
+  name: "NavCondition"
+})
+class navCondition extends Vue {
+  @Prop({ default: [], type: Array }) list!: Array<any>;
+  curPopup = false; //当前popup弹框是否显示了
+  activeIndex = 0;
+
+  get title() {
+      let curTitle: string;
+      return (item: any) => {
+        curTitle = item.text;
+        switch (item.code) {
+          case configEnums.recommendList:
+            let recommend =
+              this.$store.getters["travelFilterCondition/getCurRecommend"];
+            if (recommend&&recommend.text) {
+              curTitle = recommend.text;
+            }else{
+              curTitle = item.text;
+            }
+            return curTitle;
+          case configEnums.dateList:
+            return curTitle;
+          case configEnums.specialList:
+            return curTitle;
+        }
+      };
+    }
+
+    setPopup(e: any) {
+      this.curPopup = true;
+      var obj = {
+        text: e.target.dataset.title,
+        code: e.target.dataset.code
+      };
+      this.$store.commit("travelFilterCondition/setCurFilter", obj);
+      this.$store.commit("travelFilterCondition/setShowConditionPopup", true);
+    }
+
+    getConditionTitle():Array<any> {
+      let condisitonArray = [];
+      for (let item of this.list) {
+        condisitonArray.push(item);
+      }
+      return condisitonArray;
+    }
+}
+
+export default navCondition;
+</script>
+
 <style lang="scss" scoped>
 .condition {
   display: flex;
@@ -52,66 +109,3 @@
   }
 }
 </style>
-
-<script lang="ts">
-import configEnums from "@/globalConfig/configEmuns";
-import { CouponList } from "vant";
-
-export default {
-  props: {
-    list: {
-      default: []
-    }
-  },
-  data() {
-    return {
-      curPopup: false, //当前popup弹框是否显示了
-      activeIndex: 0
-    };
-  },
-  computed: {
-    title() {
-      let curTitle: any;
-      let $this: any = this;
-      return (item: any) => {
-        curTitle = item.text;
-        switch (item.code) {
-          case configEnums.recommendList:
-            let recommend =
-              $this.$store.getters["travelFilterCondition/getCurRecommend"];
-            if (recommend&&recommend.text) {
-              curTitle = recommend.text;
-            }else{
-              curTitle = item.text;
-            }
-            return curTitle;
-          case configEnums.dateList:
-            return curTitle;
-          case configEnums.specialList:
-            return curTitle;
-        }
-      };
-    }
-  },
-  methods: {
-    setPopup(e: any) {
-      let $this: any = this;
-      $this.curPopup = true;
-      var obj = {
-        text: e.target.dataset.title,
-        code: e.target.dataset.code
-      };
-      $this.$store.commit("travelFilterCondition/setCurFilter", obj);
-      $this.$store.commit("travelFilterCondition/setShowConditionPopup", true);
-    },
-    getConditionTitle(): any {
-      let $this: any = this;
-      let condisitonArray = [];
-      for (let item of $this.list) {
-        condisitonArray.push(item);
-      }
-      return condisitonArray;
-    }
-  }
-};
-</script>

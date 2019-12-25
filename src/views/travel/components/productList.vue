@@ -1,6 +1,12 @@
 <template>
-  <ul class="products-list" >
-    <router-link to="/travel/travelInfo" class="products-item" v-for="item in list" :key="item.id" tag="li">
+  <ul class="products-list">
+    <router-link
+      to="/travel/travelInfo"
+      class="products-item"
+      v-for="item in list"
+      :key="item.id"
+      tag="li"
+    >
       <div class="item-img">
         <img :src="item.imgUrl" alt="" />
         <slot name="img-info" :imgInfo="item"></slot>
@@ -14,24 +20,24 @@
   </ul>
 </template>
 <script lang="ts">
+import { Vue, Component, Prop } from "vue-property-decorator";
 import { Icon } from "vant";
-export default {
+
+@Component({
   name: "ProductList",
-  props: {
-    list: {
-      type: Array,
-      default: []
-    }
-  },
   components: {
     [Icon.name]: Icon
   }
-};
+})
+class productList extends Vue {
+  @Prop({ default: [], type: Array }) list!: Array<any>;
+}
+export default productList;
 </script>
 
 <style lang="scss" scoped>
-a{
-  color:#000;
+a {
+  color: #000;
 }
 .products-list {
   display: flex;

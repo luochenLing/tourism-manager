@@ -40,16 +40,6 @@ import { Component, Prop, Emit } from "vue-property-decorator";
 import timeMinxin from '@/views/travel/mixins/timeMixin'
 @Component({
   name: "Coupon",
-  // filters: {
-  //   timeFormat(input: any) {
-  //     input = input.replace(/\-/g, "/"); //横杠的时间不能被识别，所以要替换程斜杠
-  //     let time = new Date(input);
-  //     let year = time.getFullYear(); //年
-  //     let month = time.getMonth() + 1; //月
-  //     let day = time.getDate(); //日
-  //     return `${year}年${month}月${day}日`;
-  //   }
-  // }
 })
 export default class Coupon extends timeMinxin {
   @Prop({ default: [] }) list!: [];
