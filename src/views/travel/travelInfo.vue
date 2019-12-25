@@ -141,7 +141,7 @@
     <top-icon></top-icon>
   </div>
 </template>
-<script lang="ts" scoped>
+<script lang="ts">
 import { Vue } from "vue-property-decorator";
 import { Swipe, SwipeItem, Popup,Icon } from "vant";
 import RecommendProList from "./components/recommendProList.vue";
