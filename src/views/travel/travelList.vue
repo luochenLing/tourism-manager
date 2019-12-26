@@ -18,7 +18,6 @@
         position="bottom"
         round
         closeable
-        :style="{ height: '80%' }"
       >
         <card-list
           v-show="isDateOrSpecialList"
@@ -207,13 +206,10 @@ class travelList extends Vue {
 
   showConditionPopup = false;
 
-  curTitleCode = '';
+  curTitleCode = "";
 
   get isRecommendList(): any {
-    return (
-      this.curTitleCode==
-      configEnums.recommendList
-    );
+    return this.curTitleCode == configEnums.recommendList;
   }
 
   get isDateOrSpecialList() {
@@ -308,6 +304,11 @@ dfn {
   }
   .travel-content {
     padding-top: 50px;
+
+    .card-popup {
+      height: 80%;
+    }
+    
     .products-list {
       margin-top: 24px;
     }
