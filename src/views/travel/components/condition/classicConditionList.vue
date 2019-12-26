@@ -1,7 +1,7 @@
 <template>
   <ul class="condition-list">
     <li
-      v-for="(item, index) in list[0].children"
+      v-for="(item, index) in haveList(list)"
       :key="item.id"
       :data-code="item.code"
       :class="index == activeIndex ? 'active' : ''"
@@ -37,13 +37,8 @@ import { Vue, Component, Prop } from "vue-property-decorator";
   name: "ClassicConditionList"
 })
 class classicConditionList extends Vue {
-  @Prop({ default: [], type: Array }) list!: {recommendList:Array<any>};
+  @Prop({ default: [], type: Array }) list!: { recommendList: Array<any> };
   activeIndex = 0;
-
-  getList() {
-    let recommendList = this.list.recommendList;
-    return recommendList;
-  }
 
   //获取到当前选中项的值并且设置选中状态
   getSelect(e: any, index: number) {
@@ -53,6 +48,14 @@ class classicConditionList extends Vue {
       code: e.target.dataset.code
     };
     this.$store.commit("travelFilterCondition/setCurRecommend", obj);
+  }
+
+  haveList(list: Array<any>) {
+    if (list[0]) {
+      return list[0].children;
+    } else {
+      return new Array();
+    }
   }
 }
 

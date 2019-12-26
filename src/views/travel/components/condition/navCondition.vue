@@ -1,23 +1,22 @@
 <template>
   <ul class="condition">
     <li
-      v-for="(item, index) in getConditionTitle()"
+      v-for="(item, index) in list"
       :key="index"
-      :data-title="item.text"
-      :data-code="item.code"
       :class="index == activeIndex ? 'select-item' : 'unselect-item'"
-      @click="setPopup"
+      @click="setPopup(item.code)"
     >
       {{ title(item) }}
     </li>
-    <li class="unselect-item" @click="setPopup">更多筛选</li>
+    <li class="unselect-item" @click="more">更多筛选</li>
   </ul>
 </template>
 
 <script lang="ts">
 import configEnums from "@/globalConfig/configEmuns";
-import { CouponList } from "vant";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Toast } from "vant";
+import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+Vue.use(Toast);
 
 @Component({
   name: "NavCondition"
@@ -28,44 +27,46 @@ class navCondition extends Vue {
   activeIndex = 0;
 
   get title() {
-      let curTitle: string;
-      return (item: any) => {
-        curTitle = item.text;
-        switch (item.code) {
-          case configEnums.recommendList:
-            let recommend =
-              this.$store.getters["travelFilterCondition/getCurRecommend"];
-            if (recommend&&recommend.text) {
-              curTitle = recommend.text;
-            }else{
-              curTitle = item.text;
-            }
-            return curTitle;
-          case configEnums.dateList:
-            return curTitle;
-          case configEnums.specialList:
-            return curTitle;
-        }
-      };
-    }
-
-    setPopup(e: any) {
-      this.curPopup = true;
-      var obj = {
-        text: e.target.dataset.title,
-        code: e.target.dataset.code
-      };
-      this.$store.commit("travelFilterCondition/setCurFilter", obj);
-      this.$store.commit("travelFilterCondition/setShowConditionPopup", true);
-    }
-
-    getConditionTitle():Array<any> {
-      let condisitonArray = [];
-      for (let item of this.list) {
-        condisitonArray.push(item);
+    let curTitle: string;
+    return (item: any) => {
+      curTitle = item.text;
+      switch (item.code) {
+        case configEnums.recommendList:
+          let recommend = this.$store.getters[
+            "travelFilterCondition/getCurRecommend"
+          ];
+          if (recommend && recommend.text) {
+            curTitle = recommend.text;
+          } else {
+            curTitle = item.text;
+          }
+          return curTitle;
+        case configEnums.dateList:
+          return curTitle;
+        case configEnums.specialList:
+          return curTitle;
       }
-      return condisitonArray;
-    }
+    };
+  }
+
+  @Emit("update:changePopup")
+  changePopup(showPopup: boolean) {
+    return showPopup;
+  }
+
+  @Emit("update:changeCode")
+  changeCode(code: string) {
+    return code;
+  }
+
+  setPopup(code: string) {
+    this.changeCode(code);
+    this.changePopup(true);
+  }
+
+  more() {
+    Toast.fail("正在建设中");
+  }
 }
 
 export default navCondition;
@@ -106,6 +107,10 @@ export default navCondition;
     &::after {
       background-position: -23px -283px;
     }
+  }
+  .select-item:nth-child(1) {
+    padding-left: 4px;
+    box-sizing: border-box;
   }
 }
 </style>

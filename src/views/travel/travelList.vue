@@ -7,7 +7,11 @@
       <div slot="nav-right" class="address">杭州</div>
     </nav-bar>
     <div class="travel-content">
-      <nav-condition :list="conditionList" />
+      <nav-condition
+        :list="conditionList"
+        :changePopup.sync="showConditionPopup"
+        :changeCode.sync="curTitleCode"
+      />
       <van-popup
         class="card-popup"
         v-model="showConditionPopup"
@@ -16,7 +20,11 @@
         closeable
         :style="{ height: '80%' }"
       >
-        <card-list v-show="isDateOrSpecialList" :list="getList()" />
+        <card-list
+          v-show="isDateOrSpecialList"
+          :changePopup.sync="showConditionPopup"
+          :list="getList()"
+        />
         <classic-condition-list v-show="isRecommendList" :list="getList()" />
       </van-popup>
       <div class="travel-list">
@@ -197,24 +205,20 @@ class travelList extends Vue {
     }
   ];
 
-  get showConditionPopup(): any {
-    return this.$store.getters["travelFilterCondition/getShowConditionPopup"];
-  }
-  set showConditionPopup(val: any) {
-    this.$store.commit("travelFilterCondition/setShowConditionPopup", val);
-  }
+  showConditionPopup = false;
+
+  curTitleCode = '';
 
   get isRecommendList(): any {
     return (
-      this.$store.getters["travelFilterCondition/getCurFilter"].curCode ==
+      this.curTitleCode==
       configEnums.recommendList
     );
   }
 
   get isDateOrSpecialList() {
-    let value = this.$store.getters["travelFilterCondition/getCurFilter"]
-      .curCode;
-    return value == configEnums.dateList || value == configEnums.specialList;
+    let code = this.curTitleCode;
+    return code == configEnums.dateList || code == configEnums.specialList;
   }
 
   getSearch() {
@@ -222,8 +226,7 @@ class travelList extends Vue {
   }
 
   getList() {
-    let code = this.$store.getters["travelFilterCondition/getCurFilter"]
-      .curCode;
+    let code = this.curTitleCode;
     let list = this.conditionList.filter((item: any) => item.code == code);
     return list;
   }

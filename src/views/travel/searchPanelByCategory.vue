@@ -41,7 +41,7 @@ import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
 import NavList from "@/common/components/navList.vue";
 import { Vue, Component } from "vue-property-decorator";
-import { Image, Icon, CouponList } from "vant";
+import { Image, Icon } from "vant";
 
 @Component({
   name: "SearchPanelByCategory",

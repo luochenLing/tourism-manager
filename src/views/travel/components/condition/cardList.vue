@@ -4,7 +4,7 @@
       <template slot="item">
         <li
           class="condition"
-          v-for="(item, index) in list[0].children"
+          v-for="(item, index) in haveList(list)"
           :key="index"
         >
           <div class="item-title">
@@ -24,12 +24,11 @@
               v-show="cindex > 5 ? getShowAll(item.code) : true"
               :key="citem.id"
               :style="(cindex + 1) % 3 == 0 ? lineStyle : ''"
-              :data-code="citem.code"
               :class="
                 getItemClass(item.code).indexOf(citem.code) > -1 ? 'active' : ''
               "
               @click="
-                checkCurItem($event, { text: citem.text, code: citem.code })
+                checkCurItem(item.code, { text: citem.text, code: citem.code })
               "
             >
               <span>{{ citem.text }}</span>
@@ -173,7 +172,7 @@
 <script lang="ts">
 import configEnums from "@/globalConfig/configEmuns";
 import NavList from "@/common/components/navList.vue";
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch, Emit } from "vue-property-decorator";
 @Component({
   name: "CardList",
   components: {
@@ -218,6 +217,11 @@ class cardList extends Vue {
     });
   }
 
+  @Emit('update:changePopup')
+  changePopup(showPopup:boolean){
+    return showPopup;
+  }
+  
   //是否显示所有信息
   setShowAll(code: any) {
     let idx = this.showAllList.findIndex((x: any) => x.code == code);
@@ -248,23 +252,21 @@ class cardList extends Vue {
     }
   }
 
-  checkCurItem(e: any, obj: any) {
-    let $dom = e.target;
-    let pCode = $dom.parentNode.dataset.code;
-    switch (pCode) {
+  checkCurItem(code: any, obj: any) {
+    switch (code) {
       case configEnums.dateNumList:
-        this.checkItem(e, this.curDateNums, obj);
+        this.checkItem(this.curDateNums, obj);
         break;
       case configEnums.travelTimeList:
-        this.checkItem(e, this.curTravelTimes, obj);
+        this.checkItem(this.curTravelTimes, obj);
         break;
       case configEnums.specialList:
-        this.checkItem(e, this.curSpecialList, obj);
+        this.checkItem(this.curSpecialList, obj);
         break;
     }
   }
 
-  checkItem(e: any, arr: any[], obj: any) {
+  checkItem(arr: any[], obj: any) {
     this.ArryOption(arr, obj);
   }
 
@@ -365,7 +367,15 @@ class cardList extends Vue {
         this.$store.commit("travelFilterCondition/setCurSpecialList", obj);
         break;
     }
-    this.$store.commit("travelFilterCondition/setShowConditionPopup", false);
+    this.changePopup(false);
+  }
+
+  haveList(list:Array<any>){
+    if(list[0]){
+      return list[0].children
+    }else{
+      return new Array();
+    }
   }
 }
 export default cardList;
