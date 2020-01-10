@@ -6,7 +6,7 @@
       <div slot="nav-center" @click="getSearch" class="nav-search">
         搜索关键字
       </div>
-      <div slot="nav-right" class="nav-my-info">我的</div>
+      <div slot="nav-right" class="nav-my-info"><router-link to="/login">我的</router-link></div>
     </nave-bar>
     <van-swipe :autoplay="3000" indicator-color="white" class="index-swiper">
       <van-swipe-item v-for="(image, index) in images" :key="index">
