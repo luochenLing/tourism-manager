@@ -32,18 +32,20 @@
 
     <div class="hot">
       <div class="hot-title">热门搜索</div>
-      <ul class="hot-content">
-        <li class="hot-item">日本</li>
-        <li class="hot-item">泰国</li>
-        <li class="hot-item">美国</li>
-        <li class="hot-item" style="margin-right:0">马来西亚</li>
-        <li class="hot-item">印度尼西亚</li>
-        <li class="hot-item">沙巴</li>
-        <li class="hot-item">九州</li>
-        <li class="hot-item" style="margin-right:0">伦敦</li>
-        <li class="hot-item">西班牙</li>
-        <li class="hot-item">云南</li>
-      </ul>
+      <van-skeleton title :row="3" :row-width="['100%','100%','100%']" :title-width="'0%'" :loading="loading">
+        <ul class="hot-content">
+          <li
+            class="hot-item"
+            @click="searchHotCity(item.title)"
+            v-for="(item, index) in hotCityList"
+            :key="item.Id"
+            :title="item.code"
+            :style="(index + 1) % 4 == 0 ? 'margin-right:0' : ''"
+          >
+            {{ item.title }}
+          </li>
+        </ul>
+      </van-skeleton>
     </div>
     <div class="history">
       <div class="history-title">
@@ -70,15 +72,17 @@
 <script lang="ts">
 import NavBar from "@/common/components/navBar.vue";
 import { Vue, Component } from "vue-property-decorator";
-import { Icon, Dialog,Toast  } from "vant";
+import { Icon, Dialog, Toast, Skeleton } from "vant";
 import Travel from "@/views/travel/controller/travelController";
 import configEmuns from "@/globalConfig/configEmuns";
+import TourismService from "@/services/tourismService";
 Vue.use(Toast);
 @Component({
   name: "SearchPanel",
   components: {
     NavBar,
-    [Icon.name]: Icon
+    [Icon.name]: Icon,
+    [Skeleton.name]: Skeleton
   },
   directives: {
     focus: {
@@ -99,13 +103,22 @@ class searchPanel extends Vue {
   condition = "";
   showClearDom = false;
   historyList: Array<any> = [];
+  hotCityList: Array<any> = [];
+  loading = true;
   travel = new Travel();
-  mounted() {
+  created() {
     //历史数据获取
     let curHistoryList = localStorage.getItem("searchKey");
     if (curHistoryList) {
       this.historyList = JSON.parse(curHistoryList);
     }
+
+    TourismService.GetHotCityList().then(ret => {
+      if (ret.data) {
+        this.hotCityList = ret.data.resultData;
+        this.loading = false;
+      }
+    });
   }
 
   showClearSearch() {
@@ -127,10 +140,15 @@ class searchPanel extends Vue {
     this.$router.back();
   }
 
+  //热门搜索
+  searchHotCity(val: string) {
+    this.condition = val;
+    this.search();
+  }
   //搜索
   search() {
     if (!this.condition) {
-      Toast.fail('条件不能为空');
+      Toast.fail("条件不能为空");
       return;
     }
 

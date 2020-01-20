@@ -6,11 +6,20 @@
       <div slot="nav-center" @click="getSearch" class="nav-search">
         搜索关键字
       </div>
-      <div slot="nav-right" class="nav-my-info"><router-link to="/login">我的</router-link></div>
+      <div slot="nav-right" class="nav-my-info">
+        <router-link to="/login">我的</router-link>
+      </div>
     </nave-bar>
+    <vue-element-loading
+      :active="loading"
+      background-color="#f0f0f0"
+      :is-full-screen="true"
+    >
+      <img src="@/images/loading.gif" alt="" v-if="loading" />
+    </vue-element-loading>
     <van-swipe :autoplay="3000" indicator-color="white" class="index-swiper">
       <van-swipe-item v-for="(image, index) in images" :key="index">
-        <img v-lazy="image" />
+        <img v-lazy="image.content" />
       </van-swipe-item>
     </van-swipe>
     <div class="projects">
@@ -160,24 +169,38 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import {Swipe, SwipeItem, Lazyload } from "vant";
+import { Swipe, SwipeItem, Lazyload, Skeleton } from "vant";
+
+var VueElementLoading = require("vue-element-loading");
 import NaveBar from "@/common/components/navBar.vue";
+import TourismService from "@/services/tourismService";
 Vue.use(Lazyload);
 @Component({
   name: "Home",
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    "nave-bar": NaveBar
+    NaveBar,
+    VueElementLoading
   }
 })
 class home extends Vue {
-  images: Array<string> = [
-    "images/home/swipper01.jpg",
-    "images/home/swipper02.jpg",
-    "images/home/swipper03.jpg"
-  ];
-  created() {}
+  images: Array<any> = [];
+  loading: boolean = true;
+  created() {
+    //获取首页轮播图
+    TourismService.GetSwpierList()
+      .then(ret => {
+        if (ret.data) {
+          this.images = ret.data.resultData;
+          this.loading = false;
+        }
+        //console.log("x", ret);
+      })
+      .catch(err => {
+        //console.log("err", err);
+      });
+  }
   getSearch() {
     this.$router.push("/searchPanel");
   }
@@ -194,10 +217,21 @@ a:hover {
   text-align: center;
   .index-swiper {
     width: 100%;
-    img {
-      width: 100%;
-      height: 130px;
-      padding-top: 50px;
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+    /deep/ .van-swipe__track {
+      position: absolute;
+      top: 15%;
+      .van-swipe-item {
+        position: relative;
+        top: -36%;
+      }
+      img {
+        width: 100%;
+        // height: 130px;
+        padding-top: 50px;
+      }
     }
   }
   .projects {
