@@ -14,7 +14,7 @@ class ApiService {
         username: "tourismUser",
         password: "tourismPwd"
       };
-      await request.postParam(url, obj).then(ret => {
+      await request.post(null,url, obj).then(ret => {
         if (ret.data) {
           //查到数据后，存到localstorage中
           let curData = new Date();

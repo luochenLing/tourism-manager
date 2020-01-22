@@ -6,6 +6,13 @@
       </div>
       <div slot="nav-right" class="nav-my-info">我的</div>
     </nav-bar>
+    <vue-element-loading
+      :active="loading"
+      background-color="#f0f0f0"
+      :is-full-screen="true"
+    >
+      <img src="@/images/common/loading.gif" alt="" v-if="loading" />
+    </vue-element-loading>
     <van-swipe :loop="false">
       <van-swipe-item>
         <div class="btn-list">
@@ -67,7 +74,7 @@
             obj.description
           }}</span>
           <span slot="footer" class="type" slot-scope="obj">{{
-            obj.category
+            obj.category | getProTyle
           }}</span>
         </recommend-pro-list>
       </ul>
@@ -95,22 +102,22 @@
       </ul>
       <product-list :list="curProList">
         <template slot="img-info" slot-scope="obj">
-          <div class="product-addr">{{ obj.imgInfo.startingPoint }}出发</div>
+          <div class="product-addr">{{ obj.imgInfo.placeOfDeparture }}出发</div>
           <div class="product-price">
             <dfn>{{ obj.imgInfo.priceUint }}</dfn>
-            <em class="price-num">{{ obj.imgInfo.priceNum }}</em>
+            <em class="price-num">{{ obj.imgInfo.proPrice }}</em>
             <span>起</span>
           </div>
           <div class="product-other-info">
             <div class="product-score">
               <van-icon name="like-o" />
-              <em>{{ obj.imgInfo.score }}</em>
+              <em>{{ obj.imgInfo.proScore }}</em>
             </div>
-            <em>{{ obj.imgInfo.pCount }}人出游</em>
+            <em>{{ obj.imgInfo.pCount | million }}人出游</em>
           </div>
         </template>
         <template slot="content-info" slot-scope="obj">
-          <div class="item-tag">{{ obj.contentInfo.protag.join("|") }}</div>
+          <div class="item-tag">{{ obj.contentInfo.proTag | getProTage }}</div>
         </template>
       </product-list>
     </div>
@@ -119,9 +126,13 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { Swipe, SwipeItem, Icon, Toast } from "vant";
+var VueElementLoading = require("vue-element-loading");
 import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
 import RecommendProList from "./components/recommendProList.vue";
+import TourismService from "@/services/tourismService";
+import proTypeEnums from "@/globalConfig/proTypeEnums";
+import frontierEnums from "@/globalConfig/frontierEnums";
 Vue.use(Toast);
 @Component({
   name: "Travel",
@@ -129,88 +140,116 @@ Vue.use(Toast);
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [Icon.name]: Icon,
+    VueElementLoading,
     NavBar,
     ProductList,
     RecommendProList
+  },
+  filters: {
+    getProTyle: (val: string) => {
+      if (val) {
+        let valArr = val.split("|");
+        let proTypeArr: any[] = [];
+        valArr.forEach((val, index) => {
+          let ret = getProTypeByCode(parseInt(val));
+          proTypeArr.push(ret);
+        });
+        return proTypeArr.join("|");
+      }
+    },
+    getProTage: (val: string) => {
+      if (val) {
+        let valArr = val.split("|");
+        let tags: any[] = [];
+        valArr.forEach((val, index) => {
+          let ret = getProTageByCode(parseInt(val));
+          tags.push(ret);
+        });
+        return tags.join("|");
+      }
+    },
+    million: function(val: number) {
+      //过万处理
+      let num;
+      if (val > 9999) {
+        //大于9999显示x.xx万
+        num = Math.floor(val / 1000) / 10 + "万";
+      } else if (val < 9999 && val > -9999) {
+        num = val;
+      } else if (val < -9999) {
+        //小于-9999显示-x.xx万
+        num = -(Math.floor(Math.abs(val) / 1000) / 10) + "万";
+      }
+      return num;
+    }
   }
 })
 class travel extends Vue {
-  proList = [
-    {
-      id: "1",
-      title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
-      description:
-        "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
-      priceNum: "3296",
-      priceUint: "￥",
-      score: "4.9",
-      pCount: "1.9万",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "杭州",
-      imgUrl: "/images/travel/territory1.jpg",
-      category: "0"
-    },
-    {
-      id: "2",
-      title: "华东五市-苏州园林-杭州-乌镇火车5日游",
-      description:
-        "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
-      priceNum: "1780",
-      priceUint: "￥",
-      score: "4.9",
-      pCount: "4009",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "杭州",
-      imgUrl: "/images/travel/territory2.jpg",
-      category: "1"
-    },
-    {
-      id: "3",
-      title: "杭州-乌镇-西塘高铁动车3日游",
-      description:
-        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-      priceNum: "665",
-      priceUint: "￥",
-      score: "9.0",
-      pCount: "128",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "嘉兴",
-      imgUrl: "/images/travel/territory3.jpg",
-      category: "1"
-    }
-  ];
+  loading: boolean = true;
 
   curProList: Array<any> = [];
 
-  specialList = [
-    {
-      id: "1",
-      title: "希腊一地8日游",
-      description:
-        "广州往返，圣托里尼，蓝白世界，探索古雅典文明，B线春节班期升级悬崖酒店羊排餐卫城伊亚日落，C线特价雅典自由活动",
-      category: "跟团游",
-      priceUnit: "￥",
-      priceNum: "8230",
-      imgUrl: "/images/travel/special1.jpg"
-    },
-    {
-      id: "2",
-      title: "泰国8日游",
-      description:
-        "爸妈放心游/优选航班/泰段0购物0脱团/7晚五星酒店/日游沙美岛/舌尖美食/一次游三国/南京往返",
-      category: "跟团游",
-      priceUnit: "￥",
-      priceNum: "5480",
-      imgUrl: "/images/travel/special2.jpg"
-    }
-  ];
+  specialList = [];
 
   curCategory = 1;
 
+  pageIndex = 1;
+  pageSize = 10;
+
   created() {
-    this.curProList = this.proList.filter(item => item.category == "1");
+    this.getData();
   }
 
+  getData() {
+    Promise.all([
+      this.getSpecialOfferList(),
+      this.getTravelInfoListByFrontier(
+        frontierEnums.territory,
+        this.pageSize,
+        this.pageIndex
+      )
+    ])
+      .then(ret => {
+        this.loading = false;
+      })
+      .catch(err => {});
+  }
+
+  /**
+   * 尾单特价
+   */
+  getSpecialOfferList() {
+    TourismService.GetTravelInfoListByProType(proTypeEnums.specialOffer).then(
+      (ret: any) => {
+        if (ret.data) {
+          this.specialList = ret.data.resultData;
+        }
+      }
+    );
+  }
+
+  /**
+   * 境内/境外数据
+   */
+  getTravelInfoListByFrontier(
+    frontier: number = frontierEnums.territory,
+    pageSize: number,
+    pageIndex: number
+  ) {
+    TourismService.GetTravelInfoListByFrontier(
+      frontier,
+      pageSize,
+      pageIndex
+    ).then((ret: any) => {
+      if (ret.data) {
+        this.curProList = ret.data.resultData;
+      }
+    });
+  }
+
+  /**
+   * 更多分类查询
+   */
   searchPanelByCategory() {
     this.$router.push("/searchPanelByCategory");
   }
@@ -218,12 +257,22 @@ class travel extends Vue {
   //根据类别显示数据
   getListByCategory(curNum: number) {
     this.curCategory = curNum;
+    this.pageIndex = 1;
+    this.pageSize = 10;
     switch (curNum) {
       case 1:
-        this.curProList = this.proList.filter(item => item.category == "1");
+        this.getTravelInfoListByFrontier(
+          frontierEnums.territory,
+          this.pageSize,
+          this.pageIndex
+        );
         break;
       case 2:
-        this.curProList = this.proList.filter(item => item.category == "0");
+        this.getTravelInfoListByFrontier(
+          frontierEnums.abroad,
+          this.pageSize,
+          this.pageIndex
+        );
         break;
       case 3:
         Toast("正在建设中");
@@ -233,6 +282,44 @@ class travel extends Vue {
 }
 
 export default travel;
+
+/**
+ * 匹配产品类型
+ */
+function getProTypeByCode(val: number) {
+  switch (val) {
+    case 0:
+      return "跟团";
+    case 1:
+      return "自由行";
+    case 2:
+      return "周边";
+    case 3:
+      return "景点";
+    case 4:
+      return "尾单特价";
+  }
+}
+
+/**
+ * 匹配产品标签
+ */
+function getProTageByCode(val: number) {
+  switch (val) {
+    case 0:
+      return "上门接";
+    case 1:
+      return "无自费";
+    case 2:
+      return "立减";
+    case 3:
+      return "成团保障";
+    case 4:
+      return "精致小团";
+    case 5:
+      return "优选";
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -382,5 +469,8 @@ a {
 .type {
   color: #999;
   flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

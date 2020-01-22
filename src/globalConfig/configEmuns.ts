@@ -2,7 +2,8 @@ enum configEnums {
   //搜索历史缓存的key
   searchKey = "searchKey",
   //Token的Key
-  tokenKey="apiToken",
+  tokenKey = "apiToken",
+
   //#region 条件导航
   //推荐条件
   recommendList = "recommendList",
@@ -14,7 +15,6 @@ enum configEnums {
   travelTimeList = "travelTimeList",
   //特色玩乐分类
   specialList = "specialList",
-
   //#endregion
 }
 

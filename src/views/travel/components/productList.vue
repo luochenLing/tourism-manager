@@ -4,17 +4,17 @@
       to="/travel/travelInfo"
       class="products-item"
       v-for="item in list"
-      :key="item.id"
+      :key="item.proId"
       tag="li"
     >
       <div class="item-img">
-        <img :src="item.imgUrl" alt="" />
+        <img :src="item.cover" alt="" :onerror='defaultImg'/>
         <slot name="img-info" :imgInfo="item"></slot>
       </div>
       <div class="item-content">
-        <div class="item-title">{{ item.title }}</div>
+        <div class="item-title">{{ item.proTitle }}</div>
         <slot name="content-info" :contentInfo="item"></slot>
-        <div class="item-des">{{ item.description }}</div>
+        <div class="item-des">{{ item.proDes }}</div>
       </div>
     </router-link>
   </ul>
@@ -30,6 +30,7 @@ import { Icon } from "vant";
   }
 })
 class productList extends Vue {
+  defaultImg= 'this.src="/images/common/defaultImg.svg";this.style="height: 100%;"';
   @Prop({ default: [], type: Array }) list!: Array<any>;
 }
 export default productList;

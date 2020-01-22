@@ -15,7 +15,7 @@
       background-color="#f0f0f0"
       :is-full-screen="true"
     >
-      <img src="@/images/loading.gif" alt="" v-if="loading" />
+      <img src="@/images/common/loading.gif" alt="" v-if="loading" />
     </vue-element-loading>
     <van-swipe :autoplay="3000" indicator-color="white" class="index-swiper">
       <van-swipe-item v-for="(image, index) in images" :key="index">
@@ -188,7 +188,12 @@ class home extends Vue {
   images: Array<any> = [];
   loading: boolean = true;
   created() {
-    //获取首页轮播图
+    this.getSwpierList();
+  }
+  /**
+   * 获取首页轮播图
+   */
+  getSwpierList(){
     TourismService.GetSwpierList()
       .then(ret => {
         if (ret.data) {

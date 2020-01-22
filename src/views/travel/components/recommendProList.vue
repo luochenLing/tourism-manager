@@ -1,13 +1,15 @@
 <template>
   <ul class="special-list">
-    <li class="special-item" v-for="item in list" :key="item.id">
-      <img :src="item.imgUrl" />
-      <h3>{{ item.title }}</h3>
-      <slot :description="item.description" name="body"></slot>
+    <li class="special-item" v-for="item in list" :key="item.proId">
+     <div class="img">
+        <img :src="item.cover" :onerror='defaultImg'/>
+      </div>
+       <h3>{{ item.proTitle }}</h3>
+      <slot :description="item.proDes" name="body"></slot>
       <div class="infos">
-        <slot :category="item.category" name="footer"></slot>
-        <em class="unit">{{ item.priceUnit }}</em>
-        <em class="price">{{ item.priceNum }}</em>
+        <slot :category="item.proType" name="footer"></slot>
+        <em class="unit">{{ item.priceUint }}</em>
+        <em class="price">{{ item.proPrice }}</em>
         <span class="discribe">起/人</span>
       </div>
     </li>
@@ -19,6 +21,7 @@ import { Vue, Component, Prop } from "vue-property-decorator";
   name: "RecommendProList"
 })
 class recommendProList extends Vue {
+  defaultImg= 'this.src="/images/common/defaultImg.svg"';
   @Prop({ default: [], type: Array }) list!: Array<any>;
 }
 
@@ -35,6 +38,7 @@ export default recommendProList;
   .special-item {
     width: 50%;
     padding: 5px;
+    overflow: hidden;
     h3 {
       font-size: 12px;
       font-weight: 500;
@@ -46,8 +50,11 @@ export default recommendProList;
       overflow: hidden;
     }
 
-    img {
-      width: 100%;
+    .img {
+      img{
+        width: 100%;
+        height: 90px;
+      }
     }
 
     .infos {

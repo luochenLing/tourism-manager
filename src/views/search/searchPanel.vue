@@ -32,7 +32,13 @@
 
     <div class="hot">
       <div class="hot-title">热门搜索</div>
-      <van-skeleton title :row="3" :row-width="['100%','100%','100%']" :title-width="'0%'" :loading="loading">
+      <van-skeleton
+        title
+        :row="3"
+        :row-width="['100%', '100%', '100%']"
+        :title-width="'0%'"
+        :loading="loading"
+      >
         <ul class="hot-content">
           <li
             class="hot-item"
@@ -107,12 +113,18 @@ class searchPanel extends Vue {
   loading = true;
   travel = new Travel();
   created() {
-    //历史数据获取
+    this.getHistoryData();
+    this.getHotCityData();
+  }
+  /**历史数据获取 */
+  getHistoryData() {
     let curHistoryList = localStorage.getItem("searchKey");
     if (curHistoryList) {
       this.historyList = JSON.parse(curHistoryList);
     }
-
+  }
+  /**热门城市获取*/
+  getHotCityData() {
     TourismService.GetHotCityList().then(ret => {
       if (ret.data) {
         this.hotCityList = ret.data.resultData;
@@ -120,7 +132,7 @@ class searchPanel extends Vue {
       }
     });
   }
-
+  /**清空搜索内容按钮 */
   showClearSearch() {
     if (this.condition) {
       this.showClearDom = true;
@@ -129,7 +141,7 @@ class searchPanel extends Vue {
     }
   }
 
-  //清空条件事件
+  /** 清空条件事件*/
   clearCondition() {
     this.condition = "";
     this.showClearDom = false;
@@ -248,5 +260,8 @@ export default searchPanel;
       }
     }
   }
+}
+/deep/.van-skeleton__row {
+  height: 20px;
 }
 </style>
