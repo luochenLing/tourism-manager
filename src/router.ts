@@ -7,7 +7,7 @@ import SearchPanelByCategory from '@/views/travel/searchPanelByCategory.vue'
 import Travel from '@/views/travel/index.vue'
 import TravelList from '@/views/travel/travelList.vue'
 import TravelInfo from '@/views/travel/travelInfo.vue'
-
+import ErrorPage from '@/common/components/error.vue'
 
 Vue.use(Router)
 
@@ -23,6 +23,7 @@ export default new Router({
     {path:'/travel',component:Travel}, 
     {path:'/travel/travelList',component:TravelList},
     {path:'/travel/travelInfo',component:TravelInfo},
+    {path:'/error',component:ErrorPage},
   ],
   // //滚动行为：期望滚动到哪个的位置
   // scrollBehavior(to,from,savedPosition){

@@ -82,6 +82,8 @@ import { Icon, Dialog, Toast, Skeleton } from "vant";
 import Travel from "@/views/travel/controller/travelController";
 import configEmuns from "@/globalConfig/configEmuns";
 import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
 Vue.use(Toast);
 @Component({
   name: "SearchPanel",
@@ -132,6 +134,7 @@ class searchPanel extends Vue {
       }
     });
   }
+  
   /**清空搜索内容按钮 */
   showClearSearch() {
     if (this.condition) {
@@ -157,6 +160,7 @@ class searchPanel extends Vue {
     this.condition = val;
     this.search();
   }
+
   //搜索
   search() {
     if (!this.condition) {
@@ -165,7 +169,8 @@ class searchPanel extends Vue {
     }
 
     var res = this.travel.AddHistory(this.condition);
-    (this.historyList as string[]) = res;
+    this.historyList = res;
+    this.GoToTravelListPage(this.condition);
   }
 
   //清空
@@ -178,9 +183,17 @@ class searchPanel extends Vue {
         (this.historyList as string[]).splice(0);
         localStorage.removeItem(configEmuns.searchKey.toString());
       })
-      .catch(() => {
-        // on cancel
+      .catch(err => {
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(err);
+        let url = `/error?showNav=true&text=${text}`;
+        this.$router.replace(url);
       });
+  }
+
+   /**根据地名获取产品列表*/
+  GoToTravelListPage(areaName: string) {
+    this.$router.push(`/travel/travelList?areaName=${areaName}`);
   }
 }
 

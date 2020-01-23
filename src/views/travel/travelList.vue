@@ -6,6 +6,13 @@
       </div>
       <div slot="nav-right" class="address">杭州</div>
     </nav-bar>
+    <vue-element-loading
+      :active="loading"
+      background-color="#f0f0f0"
+      :is-full-screen="true"
+    >
+      <img src="@/images/common/loading.gif" alt="" v-if="loading" />
+    </vue-element-loading>
     <div class="travel-content">
       <nav-condition
         :list="conditionList"
@@ -29,22 +36,22 @@
       <div class="travel-list">
         <product-list :list="proList">
           <template slot="img-info" slot-scope="obj">
-            <div class="product-addr">{{ obj.imgInfo.startingPoint }}出发</div>
+            <div class="product-addr">{{ obj.imgInfo.placeOfDeparture }}出发</div>
             <div class="product-price">
               <dfn>{{ obj.imgInfo.priceUint }}</dfn>
-              <em class="price-num">{{ obj.imgInfo.priceNum }}</em>
+              <em class="price-num">{{ obj.imgInfo.proPrice }}</em>
               <span>起</span>
             </div>
             <div class="product-other-info">
               <div class="product-score">
                 <van-icon name="like-o" />
-                <em>{{ obj.imgInfo.score }}</em>
+                <em>{{ obj.imgInfo.proScore }}</em>
               </div>
-              <em>{{ obj.imgInfo.pCount }}人出游</em>
+              <em>{{ obj.imgInfo.proPCount|million }}人出游</em>
             </div>
           </template>
           <template slot="content-info" slot-scope="obj">
-            <div class="item-tag">{{ obj.contentInfo.protag.join("|") }}</div>
+            <div class="item-tag">{{ obj.contentInfo.proTag|getProTage }}</div>
           </template>
         </product-list>
       </div>
@@ -54,25 +61,57 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { Icon, Popup } from "vant";
+import { Icon, Popup, Toast } from "vant";
+import router from "../../router";
+var VueElementLoading = require("vue-element-loading");
 import configEnums from "@/globalConfig/configEmuns";
-
 import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
 import ClassicConditionList from "./components/condition/classicConditionList.vue";
 import NavCondition from "./components/condition/navCondition.vue";
 import CardList from "./components/condition/cardList.vue";
-
+import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
+Vue.use(Toast);
 @Component({
   name: "TravelList",
   components: {
     [Icon.name]: Icon,
     [Popup.name]: Popup,
+    VueElementLoading,
     NavBar,
     ProductList,
     ClassicConditionList,
     CardList,
     NavCondition
+  },
+  filters:{
+      getProTage: (val: string) => {
+      if (val) {
+        let valArr = val.split("|");
+        let tags: any[] = [];
+        valArr.forEach((val, index) => {
+          let ret = common.getProTageByCode(parseInt(val));
+          tags.push(ret);
+        });
+        return tags.join("|");
+      }
+    },
+     million: function(val: number) {
+      //过万处理
+      let num;
+      if (val > 9999) {
+        //大于9999显示x.xx万
+        num = Math.floor(val / 1000) / 10 + "万";
+      } else if (val < 9999 && val > -9999) {
+        num = val;
+      } else if (val < -9999) {
+        //小于-9999显示-x.xx万
+        num = -(Math.floor(Math.abs(val) / 1000) / 10) + "万";
+      }
+      return num;
+    }
   }
 })
 class travelList extends Vue {
@@ -159,54 +198,40 @@ class travelList extends Vue {
     }
   ];
 
-  proList = [
-    {
-      id: "1",
-      title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
-      description:
-        "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
-      priceNum: "3296",
-      priceUint: "￥",
-      score: "4.9",
-      pCount: "1.9万",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "杭州",
-      imgUrl: "/images/travel/territory1.jpg",
-      category: "0"
-    },
-    {
-      id: "2",
-      title: "华东五市-苏州园林-杭州-乌镇火车5日游",
-      description:
-        "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
-      priceNum: "1780",
-      priceUint: "￥",
-      score: "4.9",
-      pCount: "4009",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "杭州",
-      imgUrl: "/images/travel/territory2.jpg",
-      category: "1"
-    },
-    {
-      id: "3",
-      title: "杭州-乌镇-西塘高铁动车3日游",
-      description:
-        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-      priceNum: "665",
-      priceUint: "￥",
-      score: "9.0",
-      pCount: "128",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "嘉兴",
-      imgUrl: "/images/travel/territory3.jpg",
-      category: "1"
-    }
-  ];
+  proList = [];
 
   showConditionPopup = false;
 
   curTitleCode = "";
+
+  pageIndex = 1;
+  pageSize = 10;
+
+  loading = true;
+
+  created() {
+    this.getData();
+  }
+
+  /**
+   * 获得数据
+   */
+  getData() {
+    let { areaName, proType } = this.$route.query;
+    if (areaName) {
+      this.GetTravelListByArea(
+        areaName as string,
+        this.pageSize,
+        this.pageIndex
+      );
+    } else if (proType) {
+      this.GetTravelInfoListByProType(
+        proType as any,
+        this.pageSize,
+        this.pageIndex
+      );
+    }
+  }
 
   get isRecommendList(): any {
     return this.curTitleCode == configEnums.recommendList;
@@ -225,6 +250,55 @@ class travelList extends Vue {
     let code = this.curTitleCode;
     let list = this.conditionList.filter((item: any) => item.code == code);
     return list;
+  }
+
+  /**根据产品类型获取产品列表*/
+  GetTravelInfoListByProType(
+    proType: number,
+    pageSize: number,
+    pageIndex: number
+  ) {
+    if (!this.loading) {
+      Toast.loading({
+        message: "加载中...",
+        forbidClick: true,
+        duration: 0
+      });
+    }
+    TourismService.GetTravelInfoListByProType(
+      proType,
+      pageSize,
+      pageIndex
+    ).then(ret => {
+      if (!this.loading) {
+        Toast.clear();
+      }
+      this.loading = false;
+      if (ret.data&&ret.data.resultData) {
+        this.proList = ret.data.resultData;
+      }
+    });
+  }
+  /**根据地名获取产品列表*/
+  GetTravelListByArea(areaName: string, pageSize: number, pageIndex: number) {
+    if (!this.loading) {
+      Toast.loading({
+        message: "加载中...",
+        forbidClick: true,
+        duration: 0
+      });
+    }
+    TourismService.GetTravelListByArea(areaName, pageSize, pageIndex).then(
+      ret => {
+        if (!this.loading) {
+          Toast.clear();
+        }
+        this.loading = false;
+        if (ret.data&&ret.data.resultData) {
+          this.proList = ret.data.resultData;
+        }
+      }
+    );
   }
 }
 export default travelList;
@@ -308,7 +382,7 @@ dfn {
     .card-popup {
       height: 80%;
     }
-    
+
     .products-list {
       margin-top: 24px;
     }

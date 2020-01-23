@@ -37,7 +37,16 @@
         </template>
       </nav-list>
       <div class="right-count">
-        <product-list :list="proList"></product-list>
+        <product-list
+          :list="proList"
+          v-cloak
+          v-show="proList.length > 0"
+        ></product-list>
+        <error-page
+          v-show="proList.length <= 0"
+          v-cloak
+          :text="this.getErrorCode()"
+        />
       </div>
     </div>
   </div>
@@ -45,21 +54,25 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { Image, Icon } from "vant";
+import { Image, Icon, Toast } from "vant";
 var VueElementLoading = require("vue-element-loading");
 import NavBar from "@/common/components/navBar.vue";
 import ProductList from "./components/productList.vue";
 import NavList from "@/common/components/navList.vue";
 import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
 @Component({
   name: "SearchPanelByCategory",
   components: {
     [Image.name]: Image,
     [Icon.name]: Icon,
+    Toast,
     VueElementLoading,
     NavBar,
     ProductList,
-    NavList
+    NavList,
+    ErrorPage
   }
 })
 class searchPanelByCategory extends Vue {
@@ -111,6 +124,9 @@ class searchPanelByCategory extends Vue {
     this.GetTravelListByArea(text, this.pageSize, this.pageIndex);
   }
 
+  getErrorCode() {
+    return common.GetHttpCodeMsg(-1);
+  }
   /**
    * 获取数据
    */
@@ -130,25 +146,42 @@ class searchPanelByCategory extends Vue {
       .then(ret => {
         this.loading = false;
       })
-      .catch(err => {});
+      .catch(err => {
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(err);
+        let url = `/error?showNav=true&text=${text}`;
+        this.$router.replace(url);
+      });
   }
 
   /**热门城市获取*/
   async getHotCityData() {
+    Toast.loading({
+      message: "加载中...",
+      forbidClick: true,
+      duration:0
+    });
     await TourismService.GetHotCityList().then(ret => {
       if (ret.data && ret.data.resultData) {
         this.navList = ret.data.resultData.map((val: any) => ({
           id: val._Id,
           text: val.title
         }));
+        Toast.clear();
       }
     });
   }
 
   /**根据地名获取产品列表*/
   GetTravelListByArea(areaName: string, pageSize: number, pageIndex: number) {
+    Toast.loading({
+      message: "加载中...",
+      forbidClick: true,
+      duration:0
+    });
     TourismService.GetTravelListByArea(areaName, pageSize, pageIndex).then(
       ret => {
+        Toast.clear();
         if (ret.data) {
           this.proList = ret.data.resultData;
         }
@@ -196,7 +229,7 @@ export default searchPanelByCategory;
   }
   /deep/ .products-list {
     .item-img {
-      // height: 6rem;
+      height: 7.5rem;
       img {
         width: 97%;
       }
@@ -224,5 +257,9 @@ export default searchPanelByCategory;
   background: #f3f2f5;
   width: 75px;
   user-select: none;
+}
+
+[v-cloak] {
+  display: none;
 }
 </style>

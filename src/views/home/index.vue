@@ -174,6 +174,8 @@ import { Swipe, SwipeItem, Lazyload, Skeleton } from "vant";
 var VueElementLoading = require("vue-element-loading");
 import NaveBar from "@/common/components/navBar.vue";
 import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
 Vue.use(Lazyload);
 @Component({
   name: "Home",
@@ -200,10 +202,12 @@ class home extends Vue {
           this.images = ret.data.resultData;
           this.loading = false;
         }
-        //console.log("x", ret);
       })
       .catch(err => {
-        //console.log("err", err);
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(err);
+        let url=`/error?showNav=true&text=${text}`
+        this.$router.replace(url);
       });
   }
   getSearch() {

@@ -16,7 +16,7 @@
     <van-swipe :loop="false">
       <van-swipe-item>
         <div class="btn-list">
-          <router-link to="/travel/travelList">
+          <router-link to="/travel/travelList?proType=0">
             <img src="../../images/travel/tourist-group.png" alt="" />
             <span>跟团游</span>
           </router-link>
@@ -133,6 +133,8 @@ import RecommendProList from "./components/recommendProList.vue";
 import TourismService from "@/services/tourismService";
 import proTypeEnums from "@/globalConfig/proTypeEnums";
 import frontierEnums from "@/globalConfig/frontierEnums";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
 Vue.use(Toast);
 @Component({
   name: "Travel",
@@ -151,7 +153,7 @@ Vue.use(Toast);
         let valArr = val.split("|");
         let proTypeArr: any[] = [];
         valArr.forEach((val, index) => {
-          let ret = getProTypeByCode(parseInt(val));
+          let ret = common.getProTypeByCode(parseInt(val));
           proTypeArr.push(ret);
         });
         return proTypeArr.join("|");
@@ -162,7 +164,7 @@ Vue.use(Toast);
         let valArr = val.split("|");
         let tags: any[] = [];
         valArr.forEach((val, index) => {
-          let ret = getProTageByCode(parseInt(val));
+          let ret = common.getProTageByCode(parseInt(val));
           tags.push(ret);
         });
         return tags.join("|");
@@ -212,7 +214,12 @@ class travel extends Vue {
       .then(ret => {
         this.loading = false;
       })
-      .catch(err => {});
+      .catch(err => {
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(err);
+        let url=`/error?showNav=true&text=${text}`
+        this.$router.replace(url);
+      });
   }
 
   /**
@@ -283,43 +290,7 @@ class travel extends Vue {
 
 export default travel;
 
-/**
- * 匹配产品类型
- */
-function getProTypeByCode(val: number) {
-  switch (val) {
-    case 0:
-      return "跟团";
-    case 1:
-      return "自由行";
-    case 2:
-      return "周边";
-    case 3:
-      return "景点";
-    case 4:
-      return "尾单特价";
-  }
-}
 
-/**
- * 匹配产品标签
- */
-function getProTageByCode(val: number) {
-  switch (val) {
-    case 0:
-      return "上门接";
-    case 1:
-      return "无自费";
-    case 2:
-      return "立减";
-    case 3:
-      return "成团保障";
-    case 4:
-      return "精致小团";
-    case 5:
-      return "优选";
-  }
-}
 </script>
 
 <style lang="scss" scoped>
