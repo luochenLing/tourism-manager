@@ -170,9 +170,14 @@
 </style>
 
 <script lang="ts">
+import { Vue, Component, Prop, Watch, Emit } from "vue-property-decorator";
+import { Toast } from "vant";
 import configEnums from "@/globalConfig/configEmuns";
 import NavList from "@/common/components/navList.vue";
-import { Vue, Component, Prop, Watch, Emit } from "vue-property-decorator";
+import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
+Vue.use(Toast);
 @Component({
   name: "CardList",
   components: {
@@ -200,6 +205,14 @@ class cardList extends Vue {
   //收起时最多显示几个
   maxShowItem = 6;
 
+  //筛选条件
+  params = {
+    orderFiled: "",
+    dateList: [],
+    travelTimeList: [],
+    specialList: []
+  };
+
   mounted() {
     //98:弹层的footer和header的高度+外边距之和
     let height =
@@ -217,11 +230,16 @@ class cardList extends Vue {
     });
   }
 
-  @Emit('update:changePopup')
-  changePopup(showPopup:boolean){
+  @Emit("update:changePopup")
+  changePopup(showPopup: boolean) {
     return showPopup;
   }
-  
+
+  @Emit("update:changeProList")
+  changeProList(prolist: any[]) {
+    return prolist;
+  }
+
   //是否显示所有信息
   setShowAll(code: any) {
     let idx = this.showAllList.findIndex((x: any) => x.code == code);
@@ -235,6 +253,7 @@ class cardList extends Vue {
       };
       this.showAllList.push(item);
     }
+
     //伸缩的时候让子组件自适应高度
     this.$nextTick(() => {
       this.listHeight = (<HTMLElement>(
@@ -351,7 +370,7 @@ class cardList extends Vue {
 
   submitCondition(code: string) {
     //提交确认条件
-    let obj = {};
+    let obj: any = {};
     switch (code) {
       case configEnums.dateList:
         obj = {
@@ -359,23 +378,88 @@ class cardList extends Vue {
           curTravelTimes: this.curTravelTimes.slice()
         };
         this.$store.commit("travelFilterCondition/setCurDateList", obj);
+        this.params = this.getConditions(this.params);
+
+        this.GetTravelInfoListByFilter(this.params);
         break;
       case configEnums.specialList:
         obj = {
           curSpecialList: this.curSpecialList.slice()
         };
+        this.params.specialList = obj.curSpecialList.map(
+          (val: any, index: any) => {
+            return val.code * 1;
+          }
+        );
+
         this.$store.commit("travelFilterCondition/setCurSpecialList", obj);
+        this.params = this.getConditions(this.params);
+
+        this.GetTravelInfoListByFilter(this.params);
         break;
     }
+
     this.changePopup(false);
   }
 
-  haveList(list:Array<any>){
-    if(list[0]){
-      return list[0].children
-    }else{
+  haveList(list: Array<any>) {
+    if (list[0]) {
+      return list[0].children;
+    } else {
       return new Array();
     }
+  }
+
+  getConditions(params: any) {
+    params.orderFiled = this.$store.getters[
+      `travelFilterCondition/getCurRecommend`
+    ].code;
+    let dateList = this.$store.getters[`travelFilterCondition/getCurDateList`]
+      .curDateNums;
+    if (dateList) {
+      params.dateList = dateList.map((val: any, idx: any) => {
+        return val.code * 1;
+      });
+    }
+
+    let travelTimeList = this.$store.getters[
+      `travelFilterCondition/getCurDateList`
+    ].curTravelTimes;
+    if (travelTimeList) {
+      params.travelTimeList = travelTimeList.map((val: any, idx: any) => {
+        return val.code * 1;
+      });
+    }
+
+    let specialList = this.$store.getters[
+      `travelFilterCondition/getCurSpecialList`
+    ].curSpecialList;
+    if (specialList) {
+      params.specialList = specialList.map((val: any, idx: any) => {
+        return val.code * 1;
+      });
+    }
+    return params;
+  }
+  GetTravelInfoListByFilter(params: any) {
+    Toast.loading({
+        message: "加载中...",
+        forbidClick: true,
+        duration: 0
+      });
+    TourismService.GetTravelInfoListByFilter(params)
+      .then(ret => {
+         Toast.clear();
+        if (ret.data && ret.data.resultData) {
+          this.changeProList(ret.data.resultData);
+        }
+      })
+      .catch(err => {
+        Toast.clear();
+        let text = common.GetHttpCodeMsg(err.response.status);
+        let url = `/error?showNav=true&text=${text}`;
+        this.$router.replace(url);
+      });
   }
 }
 export default cardList;

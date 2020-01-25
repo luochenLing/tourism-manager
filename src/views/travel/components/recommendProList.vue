@@ -1,10 +1,15 @@
 <template>
   <ul class="special-list">
-    <li class="special-item" v-for="item in list" :key="item.proId">
-     <div class="img">
-        <img :src="item.cover" :onerror='defaultImg'/>
+    <router-link
+      :to="{ path: '/travel/travelInfo', query: { proId: item.proId } }"
+      class="special-item"
+      v-for="item in list"
+      :key="item.proId"
+    >
+      <div class="img">
+        <img :src="item.cover" :onerror="defaultImg" />
       </div>
-       <h3>{{ item.proTitle }}</h3>
+      <h3>{{ item.proTitle }}</h3>
       <slot :description="item.proDes" name="body"></slot>
       <div class="infos">
         <slot :category="item.proType" name="footer"></slot>
@@ -12,17 +17,18 @@
         <em class="price">{{ item.proPrice }}</em>
         <span class="discribe">起/人</span>
       </div>
-    </li>
+    </router-link>
   </ul>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 @Component({
   name: "RecommendProList"
 })
 class recommendProList extends Vue {
-  defaultImg= 'this.src="/images/common/defaultImg.svg"';
+  defaultImg = 'this.src="/images/common/defaultImg.svg"';
   @Prop({ default: [], type: Array }) list!: Array<any>;
+
 }
 
 export default recommendProList;
@@ -51,7 +57,7 @@ export default recommendProList;
     }
 
     .img {
-      img{
+      img {
         width: 100%;
         height: 90px;
       }

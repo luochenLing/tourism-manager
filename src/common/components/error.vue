@@ -2,7 +2,7 @@
   <div class="content">
     <nav-bar v-if="this.GetNavState()">
       <div slot="nav-center" class="title">
-        出了点问题
+        {{this.GetErrorTitle()}}
       </div>
       <div slot="nav-right" class="right"></div>
     </nav-bar>
@@ -31,6 +31,7 @@ import NavBar from "@/common/components/navBar.vue";
 })
 class Error extends Vue {
   @Prop({ default: "", type: String }) text!: String;
+  @Prop({ default: "出了点问题", type: String }) title?: String;
   @Prop({ type: Boolean }) showNav!: boolean;
 
   GetNavState() {
@@ -46,6 +47,14 @@ class Error extends Vue {
       return text;
     }
     return this.text;
+  }
+  GetErrorTitle() {
+    // debugger
+    let title = this.$route.query.title;
+    if (title) {
+      return title;
+    }
+    return this.title;
   }
 }
 export default Error;

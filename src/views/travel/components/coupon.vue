@@ -5,7 +5,7 @@
         <div class="ticket-header">
           <div class="price">
             <span>{{ item.price }}</span>
-            <dfn>￥</dfn>
+            <dfn>{{item.priceUnit}}</dfn>
           </div>
           <div class="rule">
             <span @click="getRoleInfo(item)">
@@ -15,7 +15,7 @@
         </div>
         <div class="ticket-body">
           <strong class="title">{{ item.title }}</strong>
-          <div class="explain">{{ item.explain }}</div>
+          <div class="explain">{{ item.description }}</div>
           <div class="time">
             有效期:{{ item.startTime | timeFormat }}-{{
               item.endTime | timeFormat
@@ -29,7 +29,7 @@
           </div>
         </div>
       </div>
-      <div class="ticket-rule" v-show="item.showRole">{{ item.rule }}</div>
+      <div class="ticket-rule" v-show="item.showRole">{{ item.content }}</div>
     </li>
   </ul>
 </template>

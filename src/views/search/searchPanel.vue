@@ -185,7 +185,7 @@ class searchPanel extends Vue {
       })
       .catch(err => {
         this.loading = false;
-        let text = common.GetHttpCodeMsg(err);
+        let text = common.GetHttpCodeMsg(err.response.status);
         let url = `/error?showNav=true&text=${text}`;
         this.$router.replace(url);
       });

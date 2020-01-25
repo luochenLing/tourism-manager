@@ -1,7 +1,7 @@
 <template>
   <ul class="products-list">
     <router-link
-      to="/travel/travelInfo"
+      :to="{path:'/travel/travelInfo',query:{proId:item.proId}}"
       class="products-item"
       v-for="item in list"
       :key="item.proId"

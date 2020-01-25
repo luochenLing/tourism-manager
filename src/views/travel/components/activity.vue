@@ -7,7 +7,7 @@
           item.endTime | timeFormat
         }}
       </div>
-      <article class="content">{{ item.explain }}</article>
+      <article class="content">{{ item.content }}</article>
     </li>
   </ul>
 </template>

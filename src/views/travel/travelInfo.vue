@@ -1,5 +1,12 @@
 <template>
   <div class="travel-info-layout">
+    <vue-element-loading
+      :active="loading"
+      background-color="#f0f0f0"
+      :is-full-screen="true"
+    >
+      <img src="@/images/common/loading.gif" alt="" v-if="loading" />
+    </vue-element-loading>
     <div class="swiper-info">
       <van-swipe :autoplay="3000" indicator-color="white" class="index-swiper">
         <van-swipe-item v-for="(image, index) in images" :key="index">
@@ -7,45 +14,64 @@
         </van-swipe-item>
       </van-swipe>
       <i class="back" @click="goBack"></i>
-      <span class="pro-no">产品编号:123456789</span>
+      <span class="pro-no">产品编号:{{ travelInfo.proId | getNo }}</span>
     </div>
 
     <section class="pro-des">
       <h2 class="title">
-        毛里求斯5晚7或8日自由行
-        销量明星款，上海出发+可搭配全国联运+热门五星集锦+洲际/长滩/美岸/鹿饮泉/四季，可私人订制
+        {{ travelInfo.proTitle }}
       </h2>
       <div class="profile">
         <span class="price">
-          <dfn>￥</dfn>
-          <span>11693</span>
+          <dfn>{{ travelInfo.priceUint }}</dfn>
+          <span>{{ travelInfo.proPrice }}</span>
           <em>起</em>
         </span>
-        <span class="score">4.8分</span>
-        <span class="count">455人出游</span>
+        <span class="score">{{ travelInfo.proScore }}分</span>
+        <span class="count">{{ travelInfo.proPCount | million }}人出游</span>
       </div>
-      <div class="tag">上门接|上门接|上门接</div>
+      <div class="tag">{{ travelInfo.proTag | getProTage }}</div>
     </section>
     <section class="discount">
-      <div class="coupon" @click="showPopup('coupon')">
+      <div
+        class="coupon"
+        v-show="travelInfo.isCoupon"
+        @click="showPopup('coupon')"
+        v-if="couponTags.titles && couponTags.titles.length > 0"
+      >
         <span class="coupon-title">
           领券
         </span>
-        <div class="coupon-count">3个</div>
+        <div class="coupon-count">
+          {{ couponTags.count ? couponTags.count : "" }}
+        </div>
         <div class="coupon-list">
-          <span class="coupon-item">满1000反100</span>
-          <span class="coupon-item">满2000反2000</span>
-          <span class="coupon-item">满50000反1000</span>
+          <span
+            class="coupon-item"
+            v-for="(item, index) in couponTags.titles"
+            :key="index"
+            >{{ item }}</span
+          >
         </div>
       </div>
-      <div class="activity" @click="showPopup('activity')">
+      <div
+        class="activity"
+        @click="showPopup('activity')"
+        v-if="activityTags.titles && activityTags.titles.length > 0"
+      >
         <span class="activity-title">
           活动
         </span>
-        <div class="activity-count">2个</div>
+        <div class="activity-count">
+          {{ activityTags.count ? activityTags.count : "" }}
+        </div>
         <div class="activity-list">
-          <span class="activity-item">点评返现</span>
-          <span class="activity-item">支付优惠</span>
+          <span
+            class="activity-item"
+            v-for="(item, index) in activityTags.titles"
+            :key="index"
+            >{{ item }}</span
+          >
         </div>
       </div>
       <van-popup
@@ -79,49 +105,19 @@
     </ul>
     <section class="feature">
       <div class="feature-title">产品特色</div>
-      <div class="feature-content">
-        ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-      </div>
+      <div class="feature-content" v-html="travelInfo.proCharacteristic"></div>
     </section>
     <section class="recommend">
       <div class="recommend-title">推荐行程</div>
-      <div class="recommend-content">
-        ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-      </div>
+      <div class="recommend-content" v-html="travelInfo.proRecommend"></div>
     </section>
     <section class="explain">
       <div class="explain-title">费用说明</div>
-      <div class="explain-content">
-        ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-      </div>
+      <div class="explain-content" v-html="travelInfo.proNotice"></div>
     </section>
     <section class="notice">
       <div class="notice-title">预订须知</div>
-      <div class="notice-content">
-        ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。 ·
-        在线签约：通过在线签约页面进行签约，付款成功后，将通过电子邮件接收电子版合同，与门市签约及传真签约同等有效。
-        · 传真签约：双方在合同上签字盖章后，通过传真进行签约。
-      </div>
+      <div class="notice-content" v-html="travelInfo.proNotice"></div>
     </section>
     <section class="pro-recommend">
       <div class="pro-recommend-title">相关产品推荐</div>
@@ -143,12 +139,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import { Swipe, SwipeItem, Popup, Icon } from "vant";
+var VueElementLoading = require("vue-element-loading");
 import RecommendProList from "./components/recommendProList.vue";
 import Coupon from "./components/coupon.vue";
 import Activity from "./components/activity.vue";
 import topIcon from "@/common/components/topIcon.vue";
+import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
+import proMixin from "@/views/travel/mixins/proMixin";
 @Component({
   name: "TravelInfo",
   components: {
@@ -156,167 +157,79 @@ import topIcon from "@/common/components/topIcon.vue";
     [SwipeItem.name]: SwipeItem,
     [Popup.name]: Popup,
     [Icon.name]: Icon,
+    VueElementLoading,
     RecommendProList,
     Coupon,
     Activity,
     topIcon
+  },
+  filters: {
+    getNo: function(val: string) {
+      if (val) {
+        return val.substr(0, 8);
+      } else {
+        return "";
+      }
+    }
   }
 })
-class travelInfo extends Vue {
+class travelInfo extends proMixin {
   images = [
     "/images/home/swipper01.jpg",
     "/images/home/swipper02.jpg",
     "/images/home/swipper03.jpg"
   ];
+  loading = true;
   activePopup = "";
   showCoupon = false;
   showTopBtn = false;
   tabIndex = 0;
   tabHeight = 46;
-  recommentList = [
-    {
-      id: "1",
-      title: "[春节]泰国曼谷-芭堤雅-沙美岛6或7日游",
-      description:
-        "纯玩可离团,全程五星/打卡双夜市+实弹射击+水上市场+人妖表演/光海鲜+日落悬崖餐厅/全程领队,省心出游",
-      priceNum: "3296",
-      priceUint: "￥",
-      score: "4.9",
-      pCount: "1.9万",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "杭州",
-      imgUrl: "/images/travel/territory1.jpg",
-      category: "0"
-    },
-    {
-      id: "2",
-      title: "华东五市-苏州园林-杭州-乌镇火车5日游",
-      description:
-        "暖冬预售,深度纯玩0购物，国际五星酒店+确保入住西栅&拈花湾双客栈，50元高标餐，2万+牛人选择，6年高销量",
-      priceNum: "1780",
-      priceUint: "￥",
-      score: "4.9",
-      pCount: "4009",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "杭州",
-      imgUrl: "/images/travel/territory2.jpg",
-      category: "1"
-    },
-    {
-      id: "3",
-      title: "杭州-乌镇-西塘高铁动车3日游",
-      description:
-        "纯玩0购物，2晚5星酒店，享5星自助早，50餐标，夜宿乌镇，游西栅送东栅，11点15点自选",
-      priceNum: "665",
-      priceUint: "￥",
-      score: "9.0",
-      pCount: "128",
-      protag: ["上门接", "无自费", "立减"],
-      startingPoint: "嘉兴",
-      imgUrl: "/images/travel/territory3.jpg",
-      category: "1"
-    }
-  ];
+  travelInfo: any = {};
+  //相关产品推荐列表
+  recommentList = [];
   //活动列表
-  activityList = [
-    {
-      id: 0,
-      startTime: "2019-1-1",
-      endTime: "2019-1-2",
-      title: "【海南春节预售】提前30天及以上优惠200元/成人",
-      explain:
-        "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
-      tag: "立减优惠"
-    },
-    {
-      id: 1,
-      startTime: "2018-10-1",
-      endTime: "2019-1-2",
-      title: "【多人立减】满6成人立减600/单",
-      explain:
-        "1、预订指定线路指定团期，提交订单时，勾选“立减优惠”即可扣减相应金额，保险不含。2、儿童价不享受该优惠政策。3、本次活动按双人出行共用一间房核算单人价格，最终成行价格将根据所选出发日期、住宿房型、交通以及所选附加服务不同而有所不同，以客服与您确认需求后核算价格为准。",
-      tag: "立减优惠"
-    },
-    {
-      id: 2,
-      startTime: "2018-11-1",
-      endTime: "2018-12-2",
-      title: "点评返现5元，抵用券20元",
-      explain:
-        "自行于网上下单预订，出游归来后发表点评，每成人返现5元（电话订单除外），返现上限金额为实付金额（包括旅游券）的3%。网上预订，出游归来后发表点评，每位成人返抵用券20元。点评后，请至会员中心查看账户余额。",
-      tag: "点评返现"
-    },
-    {
-      id: 3,
-      startTime: "2019-10-1",
-      endTime: "2020-1-2",
-      title: "邮储银联信用卡最高立减500元/单",
-      explain:
-        "邮储银联信用卡支付立减活动时间：2019.10.26-2020.1.31（每天10:00-23:59）单卡活动期间限参加1次。活动细则：1.本次立减活动名额限5,880单，其中平日活动每日45个名额，周六活动每日150个名额，每日以持卡人使用邮储银联信用卡成功支付的时间先后顺序、先到先得。活动以补贴名额或补贴金额用完的先到时间为限，抢完即止。点击进入“云闪付”的时间必须从每日10点开始，提前点击进入云闪付无法享受此次优惠。如最终支付未显示立减金额，则表示名额已用完。2.立减活动的优惠金额部分不可兑换现金。如在成功支付后，因持卡人原因发生订单退货或订单增减，持卡人应承担因订单退货或订单增减而产生的团费损失。退款金额优先抵扣邮储银联信用卡提供的立减优惠。优惠名额为一次性使用，如已使用优惠名额后退货或订单增减，不可再次享受优惠。",
-      tag: "支付优惠"
-    }
-  ];
+  activityList = [];
   //优惠券列表
-  couponList = [
-    {
-      id: 0,
-      title: "每2000立减100元（最多300元）",
-      price: "300",
-      startTime: "2019-12-1",
-      endTime: "2019-12-31",
-      isReceive: false,
-      rule:
-        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-      explain:
-        "华夏信用卡分期立减-跟团游/邮轮每满2000元减100元优惠，每单最高减300元"
-    },
-    {
-      id: 1,
-      title: "每2000立减100元（最多500元）",
-      price: "500",
-      startTime: "2019-11-1",
-      endTime: "2019-12-22",
-      isReceive: true,
-      rule:
-        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-      explain: "华夏小羊肖恩亲子卡金卡每满2000减100 每单最高减500元"
-    },
-    {
-      id: 2,
-      title: "每2000立减100元（最多300元）",
-      price: "300",
-      startTime: "2020-1-1",
-      endTime: "2020-1-31",
-      isReceive: true,
-      rule:
-        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-      explain: "【12月】光大信用卡“魅力海南旅游节”海南国内长线满2000减300"
-    },
-    {
-      id: 3,
-      title: "满300元可用",
-      price: "50",
-      startTime: "2019-12-12",
-      endTime: "2019-12-21",
-      isReceive: false,
-      rule:
-        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-      explain: "江苏银行信用卡周周减-满300立减50元"
-    },
-    {
-      id: 4,
-      title: "满3000元可用",
-      price: "100",
-      startTime: "2019-10-1",
-      endTime: "2019-12-31",
-      isReceive: true,
-      rule:
-        "1.订单需2人起订且持卡人本人须出行，并以志愿者公益龙卡信用卡、龙卡汽车卡、沪通龙卡信用卡、交通便民龙卡信用卡、上海热购信用卡、上海旅游热购信用卡、家庭挚爱信用卡银联版、全球支付卡、JOY卡银联版、Linefriends信用卡、尊享白金信用卡、钻石信用卡、智尊信用卡全额支付，在订单提交页勾选“上海建行指定龙卡专享”，方可享受每单立减200优惠。2.活动优惠名额有限，先到先得，售完即止。3.每位用户整个活动期间仅限享受1次优惠。4.本活动不可使用礼品卡和其他第三方支付方式支付。",
-      explain: "【交行普惠活动】交行信用卡国内产品订单满3000减100元"
-    }
-  ];
+  couponList = [];
+
+  couponTags = {};
+
+  activityTags = {};
+
+  created() {
+    this.getData();
+  }
+
+/**
+ * 通过监控路由发现当前页面数据变动后重新获取数据
+ */
+  @Watch("$route")
+  getRoute(to: any, from: any) {
+    this.getData();
+  }
+  getData() {
+    this.loading = true;
+    let { proId } = this.$route.query;
+    Promise.all([
+      this.GetTravelInfoById(<string>proId),
+      this.GetMediaInfoListById(<string>proId),
+      this.GetTravelActivityListByProId(<string>proId)
+    ])
+      .then(ret => {
+        this.loading = false;
+      })
+      .catch(err => {
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(err.response.status);
+        let url = `/error?showNav=true&text=${text}`;
+        this.$router.replace(url);
+      });
+  }
+
   mounted() {
     window.addEventListener("scroll", this.scrollListener, false);
+    document.documentElement.scrollTop = document.body.scrollTop = 0;
   }
 
   destroyed() {
@@ -326,16 +239,19 @@ class travelInfo extends Vue {
   goBack() {
     this.$router.back();
   }
+
   showPopup(tag: string) {
     this.showCoupon = true;
     this.activePopup = tag;
   }
+
   scrollListener() {
     let scrollTop =
       document.documentElement.scrollTop || document.body.scrollTop;
     this.getTabByScrollPosition(scrollTop);
     this.getTopBtn();
   }
+
   //获取置顶按钮
   getTopBtn() {
     let scrollTop =
@@ -348,6 +264,7 @@ class travelInfo extends Vue {
       this.showTopBtn = false;
     }
   }
+
   //根据滚动条标记选中Tab
   getTabByScrollPosition(scrollTop: number) {
     let featureTop = this.getDom(".feature").offsetTop - this.tabHeight;
@@ -403,12 +320,97 @@ class travelInfo extends Vue {
     }
     document.documentElement.scrollTop = document.body.scrollTop = height;
   }
+
   //领取优惠券
   receiveCoupon(index: number, flag: boolean) {
-    this.couponList[index].isReceive = flag;
+    (<any>this.couponList[index]).isReceive = flag;
   }
+
   getDom(el: string): HTMLElement {
     return <HTMLElement>document.querySelector(el);
+  }
+
+  GetTravelInfoById(proId: string) {
+    TourismService.GetTravelInfoById(proId)
+      .then(ret => {
+        return new Promise((resolve: Function, reject: Function) => {
+          if (ret.data && ret.data.resultData) {
+            this.travelInfo = ret.data.resultData;
+            resolve(this.travelInfo);
+          } else {
+            let text = common.GetHttpCodeMsg(-1);
+            let url = `/error?showNav=true&text=${text}&title=${text}`;
+            this.$router.replace(url);
+          }
+        });
+      })
+      .then((ret: any) => {
+        if (ret) {
+          this.GetCouponListByUserId(
+            "f3f13528-293b-4c6b-b818-6305c37e8668",
+            ret.isCoupon
+          );
+          this.GetRelatedProducts(ret.proDestination, ret.proId);
+        }
+      })
+      .catch(err => {
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(err.response.status);
+        let url = `/error?showNav=true&text=${text}&title=${text}`;
+        this.$router.replace(url);
+      });
+  }
+
+  GetMediaInfoListById(proId: string) {
+    TourismService.GetMediaInfoListById(proId).then(ret => {
+      if (ret.data && ret.data.resultData) {
+        this.images = ret.data.resultData.map((val: any, idx: any) => {
+          return val.mUrl;
+        });
+      }
+    });
+  }
+
+  GetCouponListByUserId(userId: string, iscoupon: boolean) {
+    if (!iscoupon) {
+      return;
+    }
+
+    TourismService.GetCouponListByUserId(userId).then(ret => {
+      if (ret.data && ret.data.resultData) {
+        this.couponList = ret.data.resultData;
+        let titles = this.couponList.map((val: any, idx: any) => {
+          return `${val.price}元`;
+        });
+        let count = titles.length;
+        titles = Array.from(new Set(titles));
+        this.couponTags = { count, titles };
+      }
+    });
+  }
+
+  GetTravelActivityListByProId(proId: string) {
+    TourismService.GetTravelActivityListByProId(proId).then(ret => {
+      if (ret.data && ret.data.resultData) {
+        this.activityList = ret.data.resultData;
+        let titles = this.activityList.map((val: any, idx: any) => {
+          return val.tag;
+        });
+        let count = titles.length;
+        titles = Array.from(new Set(titles));
+        this.activityTags = { count, titles };
+      }
+    });
+  }
+
+  GetRelatedProducts(areaName: string, proId: string) {
+    TourismService.RelatedProducts(areaName).then(ret => {
+      if (ret.data && ret.data.resultData) {
+        this.recommentList = ret.data.resultData.filter((item: any) => {
+          return item.proId != proId;
+        });
+      }
+    });
   }
 }
 
@@ -467,7 +469,7 @@ export default travelInfo;
     font-size: 12px;
     padding: 20px 15px 15px 15px;
     .title {
-      margin-bottom: 10px;
+      margin: 0 0 10px 0;
     }
     .profile {
       display: flex;

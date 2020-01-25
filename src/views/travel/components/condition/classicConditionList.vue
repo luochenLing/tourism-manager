@@ -31,14 +31,35 @@
 </style>
 
 <script lang="ts">
+import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+import { Toast } from "vant";
 import configEnums from "@/globalConfig/configEmuns";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import TourismService from "@/services/tourismService";
+import ErrorPage from "@/common/components/error.vue";
+import common from "@/utils/common";
+Vue.use(Toast);
 @Component({
   name: "ClassicConditionList"
 })
 class classicConditionList extends Vue {
   @Prop({ default: [], type: Array }) list!: { recommendList: Array<any> };
   activeIndex = 0;
+  params = {
+    orderFiled: "",
+    dateList: [],
+    travelTimeList: [],
+    specialList: []
+  };
+
+  @Emit("update:changeProList")
+  changeProList(prolist: any[]) {
+    return prolist;
+  }
+
+  @Emit("update:changePopup")
+  changePopup(showPopup: boolean) {
+    return showPopup;
+  }
 
   //获取到当前选中项的值并且设置选中状态
   getSelect(e: any, index: number) {
@@ -48,6 +69,9 @@ class classicConditionList extends Vue {
       code: e.target.dataset.code
     };
     this.$store.commit("travelFilterCondition/setCurRecommend", obj);
+    this.params = this.getConditions(this.params);
+    this.changePopup(false);
+    this.GetTravelInfoListByFilter(this.params);
   }
 
   haveList(list: Array<any>) {
@@ -56,6 +80,60 @@ class classicConditionList extends Vue {
     } else {
       return new Array();
     }
+  }
+
+  getConditions(params: any) {
+    params.orderFiled = this.$store.getters[
+      `travelFilterCondition/getCurRecommend`
+    ].code;
+
+    let dateList = this.$store.getters[`travelFilterCondition/getCurDateList`]
+      .curDateNums;
+    if (dateList) {
+      params.dateList = dateList.map((val: any, idx: any) => {
+        return val.code * 1;
+      });
+    }
+
+    let travelTimeList = this.$store.getters[
+      `travelFilterCondition/getCurDateList`
+    ].curTravelTimes;
+    if (travelTimeList) {
+      params.travelTimeList = travelTimeList.map((val: any, idx: any) => {
+        return val.code * 1;
+      });
+    }
+
+    let specialList = this.$store.getters[
+      `travelFilterCondition/getCurSpecialList`
+    ].curSpecialList;
+    if (specialList) {
+      params.specialList = specialList.map((val: any, idx: any) => {
+        return val.code * 1;
+      });
+    }
+    return params;
+  }
+
+  GetTravelInfoListByFilter(params: any) {
+     Toast.loading({
+        message: "加载中...",
+        forbidClick: true,
+        duration: 0
+      });
+    TourismService.GetTravelInfoListByFilter(params)
+      .then(ret => {
+        Toast.clear();
+        if (ret.data && ret.data.resultData) {
+          this.changeProList(ret.data.resultData);
+        }
+      })
+      .catch(err => {
+        Toast.clear();
+        let text = common.GetHttpCodeMsg(err.response.status);
+        let url=`/error?showNav=true&text=${text}`
+        this.$router.replace(url);
+      });
   }
 }
 

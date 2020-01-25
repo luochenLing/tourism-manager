@@ -127,6 +127,7 @@ class searchPanelByCategory extends Vue {
   getErrorCode() {
     return common.GetHttpCodeMsg(-1);
   }
+  
   /**
    * 获取数据
    */
@@ -148,7 +149,7 @@ class searchPanelByCategory extends Vue {
       })
       .catch(err => {
         this.loading = false;
-        let text = common.GetHttpCodeMsg(err);
+        let text = common.GetHttpCodeMsg(err.response.status);
         let url = `/error?showNav=true&text=${text}`;
         this.$router.replace(url);
       });

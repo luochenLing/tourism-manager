@@ -29,14 +29,22 @@
         <card-list
           v-show="isDateOrSpecialList"
           :changePopup.sync="showConditionPopup"
+          :changeProList.sync="proList"
           :list="getList()"
         />
-        <classic-condition-list v-show="isRecommendList" :list="getList()" />
+        <classic-condition-list
+          v-show="isRecommendList"
+          :changePopup.sync="showConditionPopup"
+          :changeProList.sync="proList"
+          :list="getList()"
+        />
       </van-popup>
       <div class="travel-list">
-        <product-list :list="proList">
+        <product-list :list="proList" v-show="proList.length>0">
           <template slot="img-info" slot-scope="obj">
-            <div class="product-addr">{{ obj.imgInfo.placeOfDeparture }}出发</div>
+            <div class="product-addr">
+              {{ obj.imgInfo.placeOfDeparture }}出发
+            </div>
             <div class="product-price">
               <dfn>{{ obj.imgInfo.priceUint }}</dfn>
               <em class="price-num">{{ obj.imgInfo.proPrice }}</em>
@@ -47,13 +55,20 @@
                 <van-icon name="like-o" />
                 <em>{{ obj.imgInfo.proScore }}</em>
               </div>
-              <em>{{ obj.imgInfo.proPCount|million }}人出游</em>
+              <em>{{ obj.imgInfo.proPCount | million }}人出游</em>
             </div>
           </template>
           <template slot="content-info" slot-scope="obj">
-            <div class="item-tag">{{ obj.contentInfo.proTag|getProTage }}</div>
+            <div class="item-tag">
+              {{ obj.contentInfo.proTag | getProTage }}
+            </div>
           </template>
         </product-list>
+        <error-page
+          v-show="proList.length <= 0"
+          v-cloak
+          :text="this.getErrorCode()"
+        />
       </div>
     </div>
   </div>
@@ -62,7 +77,6 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { Icon, Popup, Toast } from "vant";
-import router from "../../router";
 var VueElementLoading = require("vue-element-loading");
 import configEnums from "@/globalConfig/configEmuns";
 import NavBar from "@/common/components/navBar.vue";
@@ -73,6 +87,7 @@ import CardList from "./components/condition/cardList.vue";
 import TourismService from "@/services/tourismService";
 import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
+import proMixin from '@/views/travel/mixins/proMixin'
 Vue.use(Toast);
 @Component({
   name: "TravelList",
@@ -84,119 +99,12 @@ Vue.use(Toast);
     ProductList,
     ClassicConditionList,
     CardList,
-    NavCondition
-  },
-  filters:{
-      getProTage: (val: string) => {
-      if (val) {
-        let valArr = val.split("|");
-        let tags: any[] = [];
-        valArr.forEach((val, index) => {
-          let ret = common.getProTageByCode(parseInt(val));
-          tags.push(ret);
-        });
-        return tags.join("|");
-      }
-    },
-     million: function(val: number) {
-      //过万处理
-      let num;
-      if (val > 9999) {
-        //大于9999显示x.xx万
-        num = Math.floor(val / 1000) / 10 + "万";
-      } else if (val < 9999 && val > -9999) {
-        num = val;
-      } else if (val < -9999) {
-        //小于-9999显示-x.xx万
-        num = -(Math.floor(Math.abs(val) / 1000) / 10) + "万";
-      }
-      return num;
-    }
+    NavCondition,
+    ErrorPage
   }
 })
-class travelList extends Vue {
-  conditionList = [
-    {
-      text: "推荐条件",
-      code: "recommendList",
-      children: [
-        { id: 0, text: "推荐排序", code: "" },
-        { id: 1, text: "出游人数最高", code: "person" },
-        { id: 2, text: "分数最高", code: "score" },
-        { id: 3, text: "价格由高到低", code: "priceUp" },
-        { id: 4, text: "价格由低到高", code: "priceDown" }
-      ]
-    },
-    {
-      text: "日期/计划",
-      code: "dateList",
-      children: [
-        {
-          text: "计划天数",
-          code: "dateNumList",
-          children: [
-            { id: 0, text: "1天", count: "62%", code: 1 },
-            { id: 1, text: "2天", count: "19%", code: 2 },
-            { id: 2, text: "3天", count: "10%", code: 3 },
-            { id: 3, text: "4天", count: "", code: 4 },
-            { id: 4, text: "5天", count: "70", code: 5 },
-            { id: 5, text: "6天", count: "", code: 6 },
-            { id: 6, text: "7天", count: "62%", code: 7 },
-            { id: 11, text: "8天", count: "19%", code: 8 },
-            { id: 21, text: "9天", count: "10%", code: 9 },
-            { id: 31, text: "10天", count: "", code: 10 },
-            { id: 41, text: "11天", count: "70", code: 11 },
-            { id: 51, text: "12天", count: "", code: 12 },
-            { id: 10, text: "13天", count: "62%", code: 13 },
-            { id: 7, text: "14天", count: "19%", code: 14 },
-            { id: 8, text: "14天", count: "10%", code: 15 },
-            { id: 9, text: "16天", count: "", code: 16 },
-            { id: 12, text: "17天", count: "70", code: 17 },
-            { id: 13, text: "18天", count: "", code: 18 }
-          ]
-        },
-        {
-          text: "出行日期",
-          code: "travelTimeList",
-          children: [
-            { id: 0, text: "1月", count: "10%", code: "2019-1" },
-            { id: 1, text: "2月", count: "90%", code: "2020-2" },
-            { id: 2, text: "3月", count: "", code: "2020-3" },
-            { id: 3, text: "4月", count: "", code: "2020-4" },
-            { id: 4, text: "5月", count: "10%", code: "2019-5" },
-            { id: 5, text: "6月", count: "90%", code: "2020-6" },
-            { id: 6, text: "7月", count: "", code: "2020-7" },
-            { id: 7, text: "8月", count: "", code: "2020-8" },
-            { id: 8, text: "9月", count: "10%", code: "2019-9" },
-            { id: 9, text: "10月", count: "90%", code: "2020-10" },
-            { id: 10, text: "11月", count: "", code: "2020-11" },
-            { id: 11, text: "12月", count: "", code: "2020-12" }
-          ]
-        }
-      ]
-    },
-    {
-      text: "玩乐分类",
-      code: "specialList",
-      children: [
-        {
-          text: "特色推荐",
-          code: "specialList",
-          children: [
-            { id: 0, text: "海洋乐园", code: "ocean" },
-            { id: 1, text: "温泉体验", code: "hotSpring" },
-            { id: 2, text: "浪漫海岛", code: "isLand" },
-            { id: 3, text: "野生动物园", code: "zoo" },
-            { id: 4, text: "人妖表演", code: "simon" },
-            { id: 5, text: "峡谷冒险", code: "adventure" },
-            { id: 6, text: "刺激主题", code: "stimulate" },
-            { id: 7, text: "周边新发现", code: "periphery" },
-            { id: 8, text: "滑翔机", code: "glider" }
-          ]
-        }
-      ]
-    }
-  ];
+class travelList extends proMixin {
+  conditionList: any[] = [];
 
   proList = [];
 
@@ -217,6 +125,7 @@ class travelList extends Vue {
    * 获得数据
    */
   getData() {
+    this.GetTravelConditionList();
     let { areaName, proType } = this.$route.query;
     if (areaName) {
       this.GetTravelListByArea(
@@ -252,12 +161,17 @@ class travelList extends Vue {
     return list;
   }
 
+  getErrorCode() {
+    return common.GetHttpCodeMsg(-1);
+  }
+
   /**根据产品类型获取产品列表*/
   GetTravelInfoListByProType(
     proType: number,
     pageSize: number,
     pageIndex: number
   ) {
+    // debugger
     if (!this.loading) {
       Toast.loading({
         message: "加载中...",
@@ -274,11 +188,18 @@ class travelList extends Vue {
         Toast.clear();
       }
       this.loading = false;
-      if (ret.data&&ret.data.resultData) {
+      if (ret.data && ret.data.resultData) {
         this.proList = ret.data.resultData;
+      }
+      if (this.proList.length <= 0) {
+        this.loading = false;
+        let text = common.GetHttpCodeMsg(-1);
+        let url = `/error?showNav=true&text=${text}&title=${text}`;
+        this.$router.replace(url);
       }
     });
   }
+
   /**根据地名获取产品列表*/
   GetTravelListByArea(areaName: string, pageSize: number, pageIndex: number) {
     if (!this.loading) {
@@ -294,11 +215,106 @@ class travelList extends Vue {
           Toast.clear();
         }
         this.loading = false;
-        if (ret.data&&ret.data.resultData) {
+        if (ret.data && ret.data.resultData) {
           this.proList = ret.data.resultData;
+        }
+        if (this.proList.length <= 0) {
+          this.loading = false;
+          let text = common.GetHttpCodeMsg(-1);
+          let url = `/error?showNav=true&text=${text}&title=${text}`;
+          this.$router.replace(url);
         }
       }
     );
+  }
+
+  /**
+   * 获取筛选条件
+   */
+  GetTravelConditionList() {
+    TourismService.GetTravelConditionList().then(ret => {
+      if (ret.data && ret.data.resultData) {
+        let obj: Array<any> = ret.data.resultData.map(
+          (val: any, index: any) => {
+            let text = "",
+              code = "",
+              children = [];
+            if (val.pType == 1 && val.typeCode == 1) {
+              text = "计划天数";
+              code = val.field;
+              children = val.content.split("|").map((val: any, index: any) => {
+                return { text: `${val}天`, code: val };
+              });
+            }
+            if (val.pType == 1 && val.typeCode == 2) {
+              text = "出行日期";
+              code = val.field;
+              children = val.content.split("|").map((val: any, index: any) => {
+                return { text: `${val}月`, code: val };
+              });
+            }
+            if (val.pType == 2 && val.typeCode == 1) {
+              text = "特色推荐";
+              code = val.field;
+              children = val.content.split("|").map((val: any, index: any) => {
+                return { text: this.getThemByCode(val * 1), code: val };
+              });
+            }
+            if (val.pType == 0) {
+              text = val.content;
+              code = val.field;
+              children = [];
+            }
+            return { text, code, children };
+          }
+        );
+        let dateList = {
+          text: "日期/计划",
+          code: "dateList",
+          children: []
+        };
+        let specialList = {
+          text: "日期/计划",
+          code: "specialList",
+          children: []
+        };
+        let recommendList = {
+          text: "推荐条件",
+          code: "recommendList",
+          children: []
+        };
+        obj.forEach((val: any, index: any) => {
+          if (
+            val.code == configEnums.dateNumList ||
+            val.code == configEnums.travelTimeList
+          ) {
+            (<Array<any>>dateList.children).push(val);
+          } else if (val.code == configEnums.specialList) {
+            (<Array<any>>specialList.children).push(val);
+          } else {
+            (<Array<any>>recommendList.children).push(val);
+          }
+        });
+        this.conditionList = [recommendList, dateList, specialList];
+      }
+    });
+  }
+
+  getThemByCode(code: number) {
+    switch (code) {
+      case 0:
+        return "海洋乐园";
+      case 1:
+        return "温泉体验";
+      case 2:
+        return "浪漫海岛";
+      case 3:
+        return "野生动物园";
+      case 4:
+        return "人妖表演";
+      case 5:
+        return "峡谷冒险";
+    }
   }
 }
 export default travelList;
@@ -387,5 +403,8 @@ dfn {
       margin-top: 24px;
     }
   }
+}
+/deep/ .content{
+  height: 60vh
 }
 </style>

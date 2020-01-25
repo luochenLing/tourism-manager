@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts">
-import configEnums from "@/globalConfig/configEmuns";
 import { Toast } from "vant";
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+import configEnums from "@/globalConfig/configEmuns";
 Vue.use(Toast);
 
 @Component({

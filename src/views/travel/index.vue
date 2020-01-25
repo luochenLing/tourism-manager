@@ -13,41 +13,41 @@
     >
       <img src="@/images/common/loading.gif" alt="" v-if="loading" />
     </vue-element-loading>
-    <van-swipe :loop="false">
+    <van-swipe :loop="false" :stop-propagation="false">
       <van-swipe-item>
         <div class="btn-list">
           <router-link to="/travel/travelList?proType=0">
-            <img src="../../images/travel/tourist-group.png" alt="" />
+            <img src="@/images/travel/tourist-group.png" alt="" />
             <span>跟团游</span>
           </router-link>
-          <a>
-            <img src="../../images/travel/free-travel.png" alt="" />
+          <router-link to="/travel/travelList?proType=1">
+            <img src="@/images/travel/free-travel.png" alt="" />
             <span>自由行</span>
-          </a>
-          <a>
-            <img src="../../images/travel/cruise.png" alt="" />
+          </router-link>
+          <router-link to="/travel/travelList?proType=5">
+            <img src="@/images/travel/cruise.png" alt="" />
             <span>游轮</span>
-          </a>
-          <a>
-            <img src="../../images/travel/hotel.png" alt="" />
+          </router-link>
+          <router-link to="/travel/travelList?proType=3">
+            <img src="@/images/travel/hotel.png" alt="" />
             <span>酒.景</span>
-          </a>
-          <a>
-            <img src="../../images/travel/purpose.png" alt="" />
+          </router-link>
+          <router-link to="/travel/travelList?proType=5">
+            <img src="@/images/travel/purpose.png" alt="" />
             <span>目的的参团</span>
-          </a>
-          <a>
-            <img src="../../images/travel/travel-around.png" alt="" />
+          </router-link>
+          <router-link to="/travel/travelList?proType=2">
+            <img src="@/images/travel/travel-around.png" alt="" />
             <span>周边游</span>
-          </a>
-          <a>
-            <img src="../../images/travel/island.png" alt="" />
+          </router-link>
+          <router-link to="/travel/travelList?proType=5">
+            <img src="@/images/travel/island.png" alt="" />
             <span>海岛游</span>
-          </a>
-          <a>
-            <img src="../../images/travel/vacation.png" alt="" />
+          </router-link>
+          <router-link to="/travel/travelList?proType=5">
+            <img src="@/images/travel/vacation.png" alt="" />
             <span>度假.酒店</span>
-          </a>
+          </router-link>
         </div>
       </van-swipe-item>
       <van-swipe-item>
@@ -135,6 +135,7 @@ import proTypeEnums from "@/globalConfig/proTypeEnums";
 import frontierEnums from "@/globalConfig/frontierEnums";
 import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
+import proMixin from '@/views/travel/mixins/proMixin'
 Vue.use(Toast);
 @Component({
   name: "Travel",
@@ -158,35 +159,10 @@ Vue.use(Toast);
         });
         return proTypeArr.join("|");
       }
-    },
-    getProTage: (val: string) => {
-      if (val) {
-        let valArr = val.split("|");
-        let tags: any[] = [];
-        valArr.forEach((val, index) => {
-          let ret = common.getProTageByCode(parseInt(val));
-          tags.push(ret);
-        });
-        return tags.join("|");
-      }
-    },
-    million: function(val: number) {
-      //过万处理
-      let num;
-      if (val > 9999) {
-        //大于9999显示x.xx万
-        num = Math.floor(val / 1000) / 10 + "万";
-      } else if (val < 9999 && val > -9999) {
-        num = val;
-      } else if (val < -9999) {
-        //小于-9999显示-x.xx万
-        num = -(Math.floor(Math.abs(val) / 1000) / 10) + "万";
-      }
-      return num;
     }
   }
 })
-class travel extends Vue {
+class travel extends proMixin {
   loading: boolean = true;
 
   curProList: Array<any> = [];
@@ -216,7 +192,7 @@ class travel extends Vue {
       })
       .catch(err => {
         this.loading = false;
-        let text = common.GetHttpCodeMsg(err);
+        let text = common.GetHttpCodeMsg(err.response.status);
         let url=`/error?showNav=true&text=${text}`
         this.$router.replace(url);
       });
