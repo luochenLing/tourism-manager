@@ -4,7 +4,9 @@
       <div slot="nav-center" @click="searchPanelByCategory" class="nav-search">
         搜索目的地
       </div>
-      <div slot="nav-right" class="nav-my-info">我的</div>
+      <div slot="nav-right" class="nav-my-info">
+        <router-link to="/personalCenter" class="my">我的</router-link>
+      </div>
     </nav-bar>
     <vue-element-loading
       :active="loading"
@@ -68,16 +70,14 @@
       <span class="special-title">
         尾单特价
       </span>
-      <ul class="special-content">
-        <recommend-pro-list :list="specialList">
-          <span slot="body" class="intro" slot-scope="obj">{{
-            obj.description
-          }}</span>
-          <span slot="footer" class="type" slot-scope="obj">{{
-            obj.category | getProTyle
-          }}</span>
-        </recommend-pro-list>
-      </ul>
+      <recommend-pro-list :list="specialList">
+        <span slot="body" class="intro" slot-scope="obj">{{
+          obj.description
+        }}</span>
+        <span slot="footer" class="type" slot-scope="obj">{{
+          obj.category | getProTyle
+        }}</span>
+      </recommend-pro-list>
     </div>
     <div class="trip-products-list">
       <ul class="products-tabs">
@@ -135,7 +135,7 @@ import proTypeEnums from "@/globalConfig/proTypeEnums";
 import frontierEnums from "@/globalConfig/frontierEnums";
 import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
-import proMixin from '@/views/travel/mixins/proMixin'
+import proMixin from "@/views/travel/mixins/proMixin";
 Vue.use(Toast);
 @Component({
   name: "Travel",
@@ -193,7 +193,7 @@ class travel extends proMixin {
       .catch(err => {
         this.loading = false;
         let text = common.GetHttpCodeMsg(err.response.status);
-        let url=`/error?showNav=true&text=${text}`
+        let url = `/error?showNav=true&text=${text}`;
         this.$router.replace(url);
       });
   }
@@ -265,8 +265,6 @@ class travel extends proMixin {
 }
 
 export default travel;
-
-
 </script>
 
 <style lang="scss" scoped>

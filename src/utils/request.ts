@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class request {
-  static async post(header:any=null,url: string, params: any= null,contentType:string='application/json') {
+  static async post(header:any=null,url: string, params: any= null,contentType:string='application/json;charset=UTF-8') {
     if(header){
       axios.defaults.headers.common["Authorization"] = header;
     }

@@ -7,7 +7,7 @@
         搜索关键字
       </div>
       <div slot="nav-right" class="nav-my-info">
-        <router-link to="/login">我的</router-link>
+        <router-link to="/personalCenter">我的</router-link>
       </div>
     </nave-bar>
     <vue-element-loading
@@ -218,8 +218,8 @@ export default home;
 </script>
 
 <style lang="scss" scoped>
-a:hover {
-  color: #551a8b;
+a {
+  color: #000;
 }
 .layout {
   background-color: #f5f5f5;

@@ -11,7 +11,9 @@
         />
       </div>
       <span class="title" slot="nav-center">目的地大全</span>
-      <span class="my" slot="nav-right">我的</span>
+      <span class="my" slot="nav-right">
+        <router-link to="/personalCenter">我的</router-link>
+      </span>
     </NavBar>
     <vue-element-loading
       :active="loading"
@@ -194,6 +196,9 @@ export default searchPanelByCategory;
 </script>
 
 <style lang="scss" scoped>
+a {
+  color: #000;
+}
 .search-layout {
   .van-sidebar-item--select {
     border-color: #23cc77;

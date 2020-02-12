@@ -13,8 +13,13 @@ import { Vue, Component } from "vue-property-decorator";
   name: "NavBar"
 })
 class navBar extends Vue {
+  
   goBack() {
-    this.$router.back();
+   try {
+      this.$router.back();
+   } catch (error) {
+      this.$router.push('/home');
+   }
   }
 }
 export default navBar;

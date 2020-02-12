@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="layout" >
+  <div id="app" class="layout">
     <keep-alive>
       <transition>
         <router-view></router-view>
@@ -8,26 +8,29 @@
   </div>
 </template>
 <script lang="ts">
-  import { Vue } from "vue-property-decorator";
-  export default Vue.extend({
-    data() {
-      return {}
-    },
-    watch: {
-      // '$route' (to, from) {
-      //   console.log(to)
-      //   let toName = to.name
-      //   console.log(from)
-      //   const toIndex = to.meta.index
-      //   const fromIndex = from.meta.index
-      //   //this.transitionName = toIndex < fromIndex ? 'slide-right' : 'slide-left'
-      // }
-    }
-})
-
+import { Vue } from "vue-property-decorator";
+export default Vue.extend({
+  data() {
+    return {};
+  },
+  watch: {
+    // '$route' (to, from) {
+    //   console.log(to)
+    //   let toName = to.name
+    //   console.log(from)
+    //   const toIndex = to.meta.index
+    //   const fromIndex = from.meta.index
+    //   //this.transitionName = toIndex < fromIndex ? 'slide-right' : 'slide-left'
+    // }
+  }
+});
 </script>
 <style lang="scss" scoped>
-    *{
-      font-size: 12px;
-    }
+* {
+  font-size: 12px;
+}
+
+* {
+  touch-action: pan-y;
+}
 </style>

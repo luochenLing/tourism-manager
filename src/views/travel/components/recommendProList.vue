@@ -1,23 +1,22 @@
 <template>
   <ul class="special-list">
-    <router-link
-      :to="{ path: '/travel/travelInfo', query: { proId: item.proId } }"
-      class="special-item"
-      v-for="item in list"
-      :key="item.proId"
-    >
-      <div class="img">
-        <img :src="item.cover" :onerror="defaultImg" />
-      </div>
-      <h3>{{ item.proTitle }}</h3>
-      <slot :description="item.proDes" name="body"></slot>
-      <div class="infos">
-        <slot :category="item.proType" name="footer"></slot>
-        <em class="unit">{{ item.priceUint }}</em>
-        <em class="price">{{ item.proPrice }}</em>
-        <span class="discribe">起/人</span>
-      </div>
-    </router-link>
+    <li v-for="item in list" :key="item.proId" class="special-item">
+      <router-link
+        :to="{ path: '/travel/travelInfo', query: { proId: item.proId } }"
+      >
+        <div class="img">
+          <img :src="item.cover" :onerror="defaultImg" />
+        </div>
+        <h3>{{ item.proTitle }}</h3>
+        <slot :description="item.proDes" name="body"></slot>
+        <div class="infos">
+          <slot :category="item.proType" name="footer"></slot>
+          <em class="unit">{{ item.priceUint }}</em>
+          <em class="price">{{ item.proPrice }}</em>
+          <span class="discribe">起/人</span>
+        </div>
+      </router-link>
+    </li>
   </ul>
 </template>
 <script lang="ts">
@@ -28,7 +27,6 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 class recommendProList extends Vue {
   defaultImg = 'this.src="/images/common/defaultImg.svg"';
   @Prop({ default: [], type: Array }) list!: Array<any>;
-
 }
 
 export default recommendProList;
@@ -45,6 +43,9 @@ export default recommendProList;
     width: 50%;
     padding: 5px;
     overflow: hidden;
+    a {
+      color: #000;
+    }
     h3 {
       font-size: 12px;
       font-weight: 500;

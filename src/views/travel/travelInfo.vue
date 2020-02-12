@@ -124,7 +124,7 @@
       <recommend-pro-list :list="recommentList"> </recommend-pro-list>
     </section>
     <div class="pro-info-footer">
-      <div class="customer-service">
+      <div class="customer-service" @click="goToServer">
         <van-icon name="service-o" size="22" />
         <span>在线客服</span>
       </div>
@@ -140,7 +140,7 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
-import { Swipe, SwipeItem, Popup, Icon } from "vant";
+import { Swipe, SwipeItem, Popup, Icon, Toast } from "vant";
 var VueElementLoading = require("vue-element-loading");
 import RecommendProList from "./components/recommendProList.vue";
 import Coupon from "./components/coupon.vue";
@@ -150,6 +150,10 @@ import TourismService from "@/services/tourismService";
 import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 import proMixin from "@/views/travel/mixins/proMixin";
+import Cookie from "js-cookie";
+import SocketHandler from "@/utils/socketHandler";
+
+Vue.use(Toast);
 @Component({
   name: "TravelInfo",
   components: {
@@ -175,9 +179,9 @@ import proMixin from "@/views/travel/mixins/proMixin";
 })
 class travelInfo extends proMixin {
   images = [
-    "/images/home/swipper01.jpg",
-    "/images/home/swipper02.jpg",
-    "/images/home/swipper03.jpg"
+    // "/images/home/swipper01.jpg",
+    // "/images/home/swipper02.jpg",
+    // "/images/home/swipper03.jpg"
   ];
   loading = true;
   activePopup = "";
@@ -201,9 +205,9 @@ class travelInfo extends proMixin {
     this.getData();
   }
 
-/**
- * 通过监控路由发现当前页面数据变动后重新获取数据
- */
+  /**
+   * 通过监控路由发现当前页面数据变动后重新获取数据
+   */
   @Watch("$route")
   getRoute(to: any, from: any) {
     this.getData();
@@ -328,6 +332,27 @@ class travelInfo extends proMixin {
 
   getDom(el: string): HTMLElement {
     return <HTMLElement>document.querySelector(el);
+  }
+
+  goToServer() {
+    let sid = Cookie.get("uid");
+    let url = `ws://localhost:56586/ws?sid=${sid}`;
+    
+    SocketHandler.InitSocket(url);
+    
+    SocketHandler.onOpen(() => {
+      this.$router.push("/chatBox");
+      console.log("is connection...");
+    });
+
+    SocketHandler.onError((e: any) => {
+      console.log(e);
+      Toast.fail("连接异常");
+    });
+
+    SocketHandler.onClose((e: any) => {
+      console.log("连接已关闭...", e);
+    });
   }
 
   GetTravelInfoById(proId: string) {

@@ -1,4 +1,4 @@
-class common {
+class Common {
   //只有一天的存储器
   static GetLocalStorage(key: string) {
     let exp = 60 * 60 * 24; // 一天的秒数
@@ -30,13 +30,7 @@ class common {
     try {
       localStorage.setItem(key, valueDate);
     } catch (e) {
-      // 兼容性写法
-      if (this.prototype.IsQuotaExceeded(e)) {
-        console.log("Error: 本地存储超过限制");
-        //localStorage.clear();就算满了，也不能成为删除之前数据的理由
-      } else {
-        console.log("Error: 保存到本地存储失败");
-      }
+      console.log("Error: 保存到本地存储失败");
     }
   }
 
@@ -47,7 +41,7 @@ class common {
   static GetHttpCodeMsg(status: number) {
     switch (status) {
       case -1:
-      return '未找到数据';
+        return "未找到数据";
       case 401:
         return "没有权限";
       case 404:
@@ -60,64 +54,118 @@ class common {
   }
 
   /**
- * 匹配产品类型
- */
-static getProTypeByCode(val: number) {
-  switch (val) {
-    case 0:
-      return "跟团";
-    case 1:
-      return "自由行";
-    case 2:
-      return "周边";
-    case 3:
-      return "景点";
-    case 4:
-      return "尾单特价";
-  }
-}
-
-/**
- * 匹配产品标签
- */
-static getProTageByCode(val: number) {
-  switch (val) {
-    case 0:
-      return "上门接";
-    case 1:
-      return "无自费";
-    case 2:
-      return "立减";
-    case 3:
-      return "成团保障";
-    case 4:
-      return "精致小团";
-    case 5:
-      return "优选";
-  }
-}
-
-  private IsQuotaExceeded(e: any) {
-    let quotaExceeded = false;
-    if (e) {
-      if (e.code) {
-        switch (e.code) {
-          case 22:
-            quotaExceeded = true;
-            break;
-          case 1014: // Firefox
-            if (e.name === "NS_ERROR_DOM_QUOTA_REACHED") {
-              quotaExceeded = true;
-            }
-            break;
-        }
-      } else if (e.number === -2147024882) {
-        // IE8
-        quotaExceeded = true;
-      }
+   * 匹配产品类型
+   */
+  static getProTypeByCode(val: number) {
+    switch (val) {
+      case 0:
+        return "跟团";
+      case 1:
+        return "自由行";
+      case 2:
+        return "周边";
+      case 3:
+        return "景点";
+      case 4:
+        return "尾单特价";
     }
-    return quotaExceeded;
+  }
+
+  /**
+   * 匹配产品标签
+   */
+  static getProTageByCode(val: number) {
+    switch (val) {
+      case 0:
+        return "上门接";
+      case 1:
+        return "无自费";
+      case 2:
+        return "立减";
+      case 3:
+        return "成团保障";
+      case 4:
+        return "精致小团";
+      case 5:
+        return "优选";
+    }
+  }
+
+  /**
+   * 去除字符串头部空格或指定字符
+   * @param str
+   * @param c
+   */
+
+  static trimStart(str: string, c: string) {
+    if (c == null || c == "") {
+      var str = str.replace(/^s*/, "");
+      return str;
+    } else {
+      var rg = new RegExp("^" + c + "*");
+      var ret = str.replace(rg, "");
+      return ret;
+    }
+  }
+
+  /**
+   * 去除字符串尾部空格或指定字符
+   * @param str
+   * @param c
+   */
+
+  static trimEnd(str: string, c: string) {
+    if (c == null || c == "") {
+      var rg = /s/;
+      var i = str.length;
+      while (rg.test(str.charAt(--i)));
+      return str.slice(0, i + 1);
+    } else {
+      var rg = new RegExp(c);
+      var i = str.length;
+      while (rg.test(str.charAt(--i)));
+      return str.slice(0, i + 1);
+    }
+  }
+
+  static uncodeUtf16(str: string) {
+    var reg = /\&#.*?;/g;
+    var result = str.replace(reg, (char: any) => {
+      var H, L, code;
+      if (char.length == 9) {
+        code = parseInt(char.match(/[0-9]+/g));
+        H = Math.floor((code - 0x10000) / 0x400) + 0xd800;
+        L = ((code - 0x10000) % 0x400) + 0xdc00;
+        return unescape("%u" + H.toString(16) + "%u" + L.toString(16));
+      } else {
+        return char;
+      }
+    });
+    return result;
+  }
+
+  /**
+   * 表情转换为字符
+   * @param str
+   */
+  static utf16toEntities(str: any) {
+    var patt = /[\ud800-\udbff][\udc00-\udfff]/g; // 检测utf16字符正则
+    str = str.replace(patt, (char: any) => {
+      var H, L, code;
+      if (char.length === 2) {
+        H = char.charCodeAt(0);
+        // 取出高位
+        L = char.charCodeAt(1);
+        // 取出低位
+        code = (H - 0xd800) * 0x400 + 0x10000 + L - 0xdc00;
+        //转换算法
+        return "&#" + code + ";";
+      } else {
+        return char;
+      }
+    });
+    return str;
   }
 }
 
-export default common;
+export default Common;
