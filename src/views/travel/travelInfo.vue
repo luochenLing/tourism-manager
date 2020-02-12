@@ -152,6 +152,7 @@ import common from "@/utils/common";
 import proMixin from "@/views/travel/mixins/proMixin";
 import Cookie from "js-cookie";
 import SocketHandler from "@/utils/socketHandler";
+import configEnums from '@/globalConfig/configEmuns';
 
 Vue.use(Toast);
 @Component({
@@ -336,7 +337,7 @@ class travelInfo extends proMixin {
 
   goToServer() {
     let sid = Cookie.get("uid");
-    let url = `ws://localhost:56586/ws?sid=${sid}`;
+    let url = `${configEnums.websocketUrl}/ws?sid=${sid}`;
     
     SocketHandler.InitSocket(url);
     

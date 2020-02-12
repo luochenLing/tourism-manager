@@ -8,15 +8,16 @@ module.exports = {
       },
       "/api": {
         target: "http://192.168.150.129:8081",
-        ws: true,
+        //ws: true,
         //changeOrigin: true
       },
       "/ws": {
-        target: "ws://localhost:56586",
+        target: "ws://192.168.150.129:8083",
         ws: true,
         //changeOrigin: true
       }
     },
+    
     open: true, //自动打开浏览器
     port: 3000, //运行端口号
     contentBase: "src", //指定跟目录

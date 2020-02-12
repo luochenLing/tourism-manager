@@ -19,8 +19,14 @@ enum configEnums {
   tokenKey = "apiToken",
   //用户信息的key
   uKey = "uKey",
-  redirectUrlKey="redirectUrlKey"
+  //登陆之前的页面缓存起来
+  redirectUrlKey="redirectUrlKey",
   //#endregion
+
+//#region websocket url
+websocketUrl="ws://localhost:8082"
+//#endregion
+
 }
 
 export default configEnums;

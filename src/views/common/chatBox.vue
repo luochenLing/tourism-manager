@@ -83,18 +83,8 @@ class ChatBox extends Vue {
   ];
   showEmojiBox = false;
   msgContent = "";
-  callRecordList = [
-    {
-      flag: true,
-      imgUrl: "",
-      msgContent: "花儿为什么那么红"
-    },
-    {
-      flag: false,
-      imgUrl: "",
-      msgContent: "问花去"
-    }
-  ];
+  callRecordList:any = [];
+  
   //发送信息类
   msgObj = {
     SenderID: "",
@@ -141,7 +131,7 @@ class ChatBox extends Vue {
       (this.$refs.chatMsg as any).focus();
       let sid = <string>Cookie.get("uid");
       this.msgObj.SenderID = sid;
-      this.msgObj.Content = Common.utf16toEntities(this.msgContent);
+      this.msgObj.Content = Common.utf16toEntities(this.msgContent.trim());
       SocketHandler.sendMsg(this.msgObj, () => {
         this.$nextTick(() => {
           let chatLayout: any = this.$refs.chatLayout;
