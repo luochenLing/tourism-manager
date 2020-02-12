@@ -102,10 +102,6 @@ class ChatBox extends Vue {
     MessageType: "text",
     Content: ""
   };
-  // beforeCreate() {
-  //   let uid = Cookie.get("uid");
-  //   let url = `/ws?uid=${uid}`;
-  // }
 
   mounted() {
     this.setBoxHeight(window.screen.availHeight);
@@ -124,15 +120,8 @@ class ChatBox extends Vue {
     }
   }
   setBoxHeight(height: number) {
-     let chatLayout: any = this.$refs.chatLayout;
-     //let chatContent: any = this.$refs.chatContent;
-    // if (height > window.screen.availHeight) {
-    //   chatLayout.style.height = `${height + 106}px`;
-    //   chatContent.style.height = `${height + 45}px`;
-    // } else {
-      chatLayout.style.height = `${window.screen.availHeight - 44}px`;
-      //chatContent.style.height = `${window.screen.availHeight - 105}px`;
-    //}
+    let chatLayout: any = this.$refs.chatLayout;
+    chatLayout.style.height = `${window.screen.availHeight - 44}px`;
   }
   getEmojiItem(val: any) {
     this.msgContent += val;
@@ -145,8 +134,8 @@ class ChatBox extends Vue {
 
   sendMsg(event: any) {
     if (event.keyCode == 13) {
-      if(this.msgContent==''){
-        Toast.fail('发送消息不能为空！');
+      if (this.msgContent == "") {
+        Toast.fail("发送消息不能为空！");
         return;
       }
       (this.$refs.chatMsg as any).focus();
@@ -154,10 +143,10 @@ class ChatBox extends Vue {
       this.msgObj.SenderID = sid;
       this.msgObj.Content = Common.utf16toEntities(this.msgContent);
       SocketHandler.sendMsg(this.msgObj, () => {
-                this.$nextTick(()=>{
-   let chatLayout: any = this.$refs.chatLayout;
-            chatLayout.scrollTop=chatLayout.scrollHeight;
-        })
+        this.$nextTick(() => {
+          let chatLayout: any = this.$refs.chatLayout;
+          chatLayout.scrollTop = chatLayout.scrollHeight;
+        });
         this.msgContent = "";
       });
 
@@ -180,18 +169,10 @@ class ChatBox extends Vue {
         }
         msgItem.msgContent = Common.uncodeUtf16(ret.Content);
         this.callRecordList.push(msgItem);
-        // let height: number = 0;
-        // let liList = document
-        //   .querySelectorAll(".chat-content li")
-        //   .forEach((item, index) => {
-        //     height += (item as any).offsetHeight;
-        //   });
-        // document.querySelector('.chat-layout').scrollTop=document.querySelector('.chat-layout').scrollHeight;
-        this.$nextTick(()=>{
-   let chatLayout: any = this.$refs.chatLayout;
-            chatLayout.scrollTop=chatLayout.scrollHeight;
-        })
-         
+        this.$nextTick(() => {
+          let chatLayout: any = this.$refs.chatLayout;
+          chatLayout.scrollTop = chatLayout.scrollHeight;
+        });
       });
     }
   }
@@ -201,7 +182,7 @@ export default ChatBox;
 </script>
 
 <style lang="scss" scoped>
-.layout{
+.layout {
   overflow: hidden;
 }
 .chat-layout {
