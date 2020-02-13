@@ -51,6 +51,10 @@ class classicConditionList extends Vue {
     specialList: []
   };
 
+  beforeDestroy() {
+    Toast.clear();  
+  }
+
   @Emit("update:changeProList")
   changeProList(prolist: any[]) {
     return prolist;

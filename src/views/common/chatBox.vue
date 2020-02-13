@@ -1,12 +1,12 @@
 <template>
-  <div class="chat-layout" ref="chatLayout">
+  <div class="chat-layout" ref="chatLayout" @touchstart.self ="closeEmojiBox()">
     <NavBar>
       <div class="nav-center" slot="nav-center">我的管家</div>
       <div class="nav-right" slot="nav-right">
         <!-- <h4>注册</h4> -->
       </div>
     </NavBar>
-    <ul class="chat-content" ref="chatContent" @click="closeEmojiBox">
+    <ul class="chat-content" ref="chatContent">
       <chat-msg
         v-for="(item, index) in callRecordList"
         :flag="item.flag"
@@ -107,11 +107,13 @@ class ChatBox extends Vue {
   getEmjisBox() {
     if (!this.showEmojiBox) {
       this.showEmojiBox = true;
+    }else{
+      this.showEmojiBox = false;
     }
   }
   setBoxHeight(height: number) {
     let chatLayout: any = this.$refs.chatLayout;
-    chatLayout.style.height = `${window.screen.availHeight - 44}px`;
+    chatLayout.style.height = `${document.documentElement.clientHeight - 38}px`;
   }
   getEmojiItem(val: any) {
     this.msgContent += val;
@@ -213,7 +215,7 @@ export default ChatBox;
         font-size: 16px;
       }
       position: absolute;
-      top: 45px;
+      top: 46px;
       left: 0;
       height: calc(100% - 42px);
       overflow: auto;

@@ -107,6 +107,10 @@ class searchPanelByCategory extends Vue {
     this.getDom(".right-count").style.height = `${height}px`;
   }
 
+  beforeDestroy() {
+    Toast.clear();  
+  }
+
   getDom(el: string): HTMLElement {
     return <HTMLElement>document.querySelector(el);
   }

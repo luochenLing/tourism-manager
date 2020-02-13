@@ -121,6 +121,10 @@ class travelList extends proMixin {
     this.getData();
   }
 
+  beforeDestroy() {
+    Toast.clear();  
+  }
+
   /**
    * 获得数据
    */

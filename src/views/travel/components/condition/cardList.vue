@@ -219,6 +219,11 @@ class cardList extends Vue {
       (<HTMLElement>document.querySelector(".card-popup")).clientHeight - 98;
     this.viewClientHeight = height;
   }
+
+  beforeDestroy() {
+    Toast.clear();  
+  }
+
   @Watch("list")
   listChange() {
     let navClass = <HTMLElement>document.querySelector(".nav-class");
