@@ -63,5 +63,5 @@ We will consider using it in the next step.
 ### 兼容性
 亲测以下版本有效
 ios 12-13 
-华为nova
+华为nova5
 小米5
