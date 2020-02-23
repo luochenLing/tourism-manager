@@ -65,3 +65,8 @@ We will consider using it in the next step.
 ios 12-13 
 华为nova5
 小米5
+
+###版本介绍
+
+master版本是单纯的vue静态页面
+v1.2.0.0是结合了API+ts的全新写法
