@@ -150,10 +150,12 @@ import TourismService from "@/services/tourismService";
 import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 import proMixin from "@/views/travel/mixins/proMixin";
-import Cookie from "js-cookie";
 import SocketHandler from "@/utils/socketHandler";
 import configEnums from '@/globalConfig/configEmuns';
-
+const isProd=process.env.NODE_ENV==='production';
+if(!isProd){
+  var Cookies =require("js-cookie");
+}
 Vue.use(Toast);
 @Component({
   name: "TravelInfo",
@@ -336,7 +338,7 @@ class travelInfo extends proMixin {
   }
 
   goToServer() {
-    let sid = Cookie.get("uid");
+    let sid = Cookies.get("uid");
     let url = `${configEnums.websocketUrl}/ws?sid=${sid}`;
     
     SocketHandler.InitSocket(url);

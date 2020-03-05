@@ -1,23 +1,25 @@
+const isProduction = process.env.NODE_ENV === "production";
+
 module.exports = {
   devServer: {
     proxy: {
       "/connect/token": {
-        target: "http://192.168.150.129:8080",
+        target: "http://192.168.150.129:8080"
         //ws: true,//如果要代理 websockets，配置这个参数
         //changeOrigin: true //是否跨域
       },
       "/api": {
-        target: "http://192.168.150.129:8081",
+        target: "http://192.168.150.129:8081"
         //ws: true,
         //changeOrigin: true
       },
       "/ws": {
         target: "ws://192.168.150.129:8083",
-        ws: true,
+        ws: true
         //changeOrigin: true
       }
     },
-    
+
     open: true, //自动打开浏览器
     port: 3000, //运行端口号
     contentBase: "src", //指定跟目录
@@ -34,8 +36,17 @@ module.exports = {
     }
   },
   //添加VSCODE调试
-  configureWebpack: {
-    devtool: "source-map"
-  },
+  configureWebpack: config => {
+    config.devtool = "source-map";
+    if (isProduction) {
+      config.externals = {
+        vue: "Vue",
+        "vue-router": "VueRouter",
+        vuex: "Vuex",
+        axios: "axios",
+        vant: "vant"
+      };
+    }
+  }
   //publicPath:'/'
 };

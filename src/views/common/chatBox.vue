@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-layout" ref="chatLayout" @touchstart.self ="closeEmojiBox()">
+  <div class="chat-layout" ref="chatLayout" @touchstart.self="closeEmojiBox()">
     <NavBar>
       <div class="nav-center" slot="nav-center">我的管家</div>
       <div class="nav-right" slot="nav-right">
@@ -41,12 +41,14 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { Grid, GridItem, Toast } from "vant";
-import Cookie from "js-cookie";
 import NavBar from "@/common/components/navBar.vue";
 import ChatMsg from "@/views/common/chatMsg.vue";
 import SocketHandler from "@/utils/socketHandler";
 import Common from "@/utils/common";
-
+const isProd=process.env.NODE_ENV==='production';
+if(!isProd){
+  var Cookies =require("js-cookie");
+}
 @Component({
   name: "ChatBox",
   components: {
@@ -83,8 +85,8 @@ class ChatBox extends Vue {
   ];
   showEmojiBox = false;
   msgContent = "";
-  callRecordList:any = [];
-  
+  callRecordList: any = [];
+
   //发送信息类
   msgObj = {
     SenderID: "",
@@ -107,7 +109,7 @@ class ChatBox extends Vue {
   getEmjisBox() {
     if (!this.showEmojiBox) {
       this.showEmojiBox = true;
-    }else{
+    } else {
       this.showEmojiBox = false;
     }
   }
@@ -131,7 +133,7 @@ class ChatBox extends Vue {
         return;
       }
       (this.$refs.chatMsg as any).focus();
-      let sid = <string>Cookie.get("uid");
+      let sid = <string>Cookies.get("uid");
       this.msgObj.SenderID = sid;
       this.msgObj.Content = Common.utf16toEntities(this.msgContent.trim());
       SocketHandler.sendMsg(this.msgObj, () => {
@@ -146,7 +148,7 @@ class ChatBox extends Vue {
         //相同的时候说明是自己发送的信息，不同的时候说明是对方发送的
         console.log(e);
         let ret = JSON.parse(e.data);
-        let sid = <string>Cookie.get("uid");
+        let sid = <string>Cookies.get("uid");
         //界面显示类
         let msgItem = {
           flag: false,

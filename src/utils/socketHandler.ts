@@ -1,4 +1,8 @@
-import Cookie from "js-cookie";
+const isProd=process.env.NODE_ENV==='production';
+if(!isProd){
+  var Cookies =require("js-cookie");
+}
+
 (window as any).ws=null;
 class SocketHandler {
   static _url='';
@@ -52,7 +56,7 @@ class SocketHandler {
   private static reconnect():void{
     if (!(window as any).ws){
       if(!SocketHandler._url){
-        let uid = Cookie.get("uid");
+        let uid = Cookies.get("uid");
         SocketHandler._url=`/ws?uid=${uid}`;
       }
 
