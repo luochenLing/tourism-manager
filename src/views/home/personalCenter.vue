@@ -78,9 +78,8 @@ class PersonalCenter extends Vue {
 
   logOut() {
     CustomerService.logOut().then(ret => {
-     
       if(ret.status==200){
- console.log(ret)
+        
       }
     });
   }

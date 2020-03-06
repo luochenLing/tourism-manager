@@ -1,3 +1,4 @@
+//const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
@@ -47,6 +48,14 @@ module.exports = {
         vant: "vant"
       };
     }
+    // config.plugins.push(
+    //   new MiniCssExtractPlugin({
+    //     ignoreOrder:true
+    //   })
+    // )
+  },
+  chainWebpack:config=>{
+    config.plugins.delete('prefetch');
   }
   //publicPath:'/'
 };
