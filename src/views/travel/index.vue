@@ -144,9 +144,10 @@ Vue.use(Toast);
     [SwipeItem.name]: SwipeItem,
     [Icon.name]: Icon,
     VueElementLoading,
-    NavBar,
-    ProductList,
-    RecommendProList
+    'nav-bar':()=>import('@/common/components/navBar.vue'),
+    'nav-list':()=>import('@/common/components/navList.vue'),
+    'product-list':()=>import('./components/productList.vue'),
+    'recommend-pro-list':()=>import('./components/recommendProList.vue')
   },
   filters: {
     getProTyle: (val: string) => {

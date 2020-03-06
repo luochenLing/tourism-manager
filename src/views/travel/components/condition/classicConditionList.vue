@@ -35,7 +35,6 @@ import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import { Toast } from "vant";
 import configEnums from "@/globalConfig/configEmuns";
 import TourismService from "@/services/tourismService";
-import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 Vue.use(Toast);
 @Component({

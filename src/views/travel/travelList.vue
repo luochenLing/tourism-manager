@@ -79,13 +79,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { Icon, Popup, Toast } from "vant";
 var VueElementLoading = require("vue-element-loading");
 import configEnums from "@/globalConfig/configEmuns";
-import NavBar from "@/common/components/navBar.vue";
-import ProductList from "./components/productList.vue";
-import ClassicConditionList from "./components/condition/classicConditionList.vue";
-import NavCondition from "./components/condition/navCondition.vue";
-import CardList from "./components/condition/cardList.vue";
 import TourismService from "@/services/tourismService";
-import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 import proMixin from '@/views/travel/mixins/proMixin'
 Vue.use(Toast);
@@ -95,12 +89,12 @@ Vue.use(Toast);
     [Icon.name]: Icon,
     [Popup.name]: Popup,
     VueElementLoading,
-    NavBar,
-    ProductList,
-    ClassicConditionList,
-    CardList,
-    NavCondition,
-    ErrorPage
+    'nav-bar':()=>import('@/common/components/navBar.vue'),
+    'product-list':()=>import('./components/productList.vue'),
+    'classic-condition-list':()=>import('./components/condition/classicConditionList.vue'),
+    'nav-condition':()=>import('./components/condition/navCondition.vue'),
+    'card-list':()=>import('./components/condition/cardList.vue'),
+    'error-page':()=>import('@/common/components/error.vue'),
   }
 })
 class travelList extends proMixin {
@@ -409,6 +403,6 @@ dfn {
   }
 }
 /deep/ .content{
-  height: 60vh
+  height: 60vh !important
 }
 </style>

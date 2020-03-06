@@ -173,7 +173,6 @@
 import { Vue, Component, Prop, Watch, Emit } from "vue-property-decorator";
 import { Toast } from "vant";
 import configEnums from "@/globalConfig/configEmuns";
-import NavList from "@/common/components/navList.vue";
 import TourismService from "@/services/tourismService";
 import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
@@ -181,7 +180,7 @@ Vue.use(Toast);
 @Component({
   name: "CardList",
   components: {
-    NavList
+    'nav-list':()=>import('@/common/components/navList.vue')
   }
 })
 class cardList extends Vue {

@@ -1,7 +1,11 @@
 import Vue from "vue";
 import Router from "vue-router";
-
+import { Lazyload } from "vant";
+const TravelInfo =()=>import('@/views/travel/travelInfo.vue');
 Vue.use(Router);
+Vue.use(Lazyload, {
+  TravelInfo: true
+})
 
 export default new Router({
   mode: "history",
@@ -22,7 +26,7 @@ export default new Router({
     //requireAuth，需要登陆验证的界面标志
     {
       path: "/travel/travelInfo",
-      component: ()=>import('@/views/travel/travelInfo.vue'),
+      component: TravelInfo,
       meta: { requireAuth: true }
     },
     { path: "/error", component: ()=>import('@/common/components/error.vue') },

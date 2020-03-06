@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <nave-bar>
+    <nav-bar>
       <div slot="nav-left" class="nav-my-info">
         <van-icon name="wap-home-o" color="#fff" @click="goHome" size="30px" />
       </div>
@@ -8,7 +8,7 @@
         我的管家
       </div>
       <div slot="nav-right" class="nav-my-info"></div>
-    </nave-bar>
+    </nav-bar>
     <header class="center-header">
       <img
         src="@/images/common/head-portrait.jpg"
@@ -63,14 +63,13 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { Icon, Button } from "vant";
-import NaveBar from "@/common/components/navBar.vue";
 import CustomerService from "@/services/customerService";
 @Component({
   name: "PersonalCenter",
   components: {
     [Icon.name]: Icon,
     [Button.name]: Button,
-    NaveBar
+    'nav-bar':()=>import('@/common/components/navBar.vue')
   }
 })
 class PersonalCenter extends Vue {
@@ -79,7 +78,7 @@ class PersonalCenter extends Vue {
   logOut() {
     CustomerService.logOut().then(ret => {
       if(ret.status==200){
-        
+        this.$router.replace("/login");
       }
     });
   }

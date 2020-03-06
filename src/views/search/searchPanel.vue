@@ -1,6 +1,6 @@
 <template>
   <div class="search-layout">
-    <NavBar class="nav-search">
+    <nav-bar class="nav-search">
       <span class="cancel" @click="cancel" slot="nav-left">取消</span>
       <input
         class="search-content"
@@ -28,7 +28,7 @@
         color="#2dbb55"
         size="30px"
       />
-    </NavBar>
+    </nav-bar>
 
     <div class="hot">
       <div class="hot-title">热门搜索</div>
@@ -76,7 +76,6 @@
 </template>
 
 <script lang="ts">
-import NavBar from "@/common/components/navBar.vue";
 import { Vue, Component } from "vue-property-decorator";
 import { Icon, Dialog, Toast, Skeleton } from "vant";
 import Travel from "@/views/travel/controller/travelController";
@@ -88,7 +87,7 @@ Vue.use(Toast);
 @Component({
   name: "SearchPanel",
   components: {
-    NavBar,
+    'nav-bar':()=>import('@/common/components/navBar.vue'),
     [Icon.name]: Icon,
     [Skeleton.name]: Skeleton
   },

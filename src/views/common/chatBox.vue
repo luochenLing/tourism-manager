@@ -41,8 +41,6 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { Grid, GridItem, Toast } from "vant";
-import NavBar from "@/common/components/navBar.vue";
-import ChatMsg from "@/views/common/chatMsg.vue";
 import SocketHandler from "@/utils/socketHandler";
 import Common from "@/utils/common";
 const isProd=process.env.NODE_ENV==='production';
@@ -54,8 +52,8 @@ if(!isProd){
   components: {
     [Grid.name]: Grid,
     [GridItem.name]: GridItem,
-    NavBar,
-    ChatMsg
+    'nav-bar':()=>import('@/common/components/navBar.vue'),
+    'chat-msg':()=>import('@/views/common/chatMsg.vue')
   }
 })
 class ChatBox extends Vue {

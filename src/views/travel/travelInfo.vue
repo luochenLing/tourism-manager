@@ -140,22 +140,18 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
-import { Swipe, SwipeItem, Popup, Icon, Toast } from "vant";
+import { Swipe, SwipeItem, Popup, Icon, Toast,Lazyload } from "vant";
 var VueElementLoading = require("vue-element-loading");
-import RecommendProList from "./components/recommendProList.vue";
-import Coupon from "./components/coupon.vue";
-import Activity from "./components/activity.vue";
-import topIcon from "@/common/components/topIcon.vue";
 import TourismService from "@/services/tourismService";
-import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 import proMixin from "@/views/travel/mixins/proMixin";
 import SocketHandler from "@/utils/socketHandler";
-import configEnums from '@/globalConfig/configEmuns';
-const isProd=process.env.NODE_ENV==='production';
-if(!isProd){
-  var Cookies =require("js-cookie");
+import configEnums from "@/globalConfig/configEmuns";
+const isProd = process.env.NODE_ENV === "production";
+if (!isProd) {
+  var Cookies = require("js-cookie");
 }
+
 Vue.use(Toast);
 @Component({
   name: "TravelInfo",
@@ -165,10 +161,10 @@ Vue.use(Toast);
     [Popup.name]: Popup,
     [Icon.name]: Icon,
     VueElementLoading,
-    RecommendProList,
-    Coupon,
-    Activity,
-    topIcon
+    "recommend-pro-list": () => import("./components/recommendProList.vue"),
+    coupon: () => import("./components/coupon.vue"),
+    activity: () => import("./components/activity.vue"),
+    "top-icon": () => import("@/common/components/topIcon.vue")
   },
   filters: {
     getNo: function(val: string) {
@@ -340,9 +336,9 @@ class travelInfo extends proMixin {
   goToServer() {
     let sid = Cookies.get("uid");
     let url = `${configEnums.websocketUrl}/ws?sid=${sid}`;
-    
+
     SocketHandler.InitSocket(url);
-    
+
     SocketHandler.onOpen(() => {
       this.$router.push("/chatBox");
       console.log("is connection...");

@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="layout">
-    <nave-bar>
+    <nav-bar>
       <img slot="nav-left" src="/images/logo.png" alt class="logo" />
       <div slot="nav-left" class="address">杭州</div>
       <div slot="nav-center" @click="getSearch" class="nav-search">
@@ -9,7 +9,7 @@
       <div slot="nav-right" class="nav-my-info">
         <router-link to="/personalCenter">我的</router-link>
       </div>
-    </nave-bar>
+    </nav-bar>
     <vue-element-loading
       :active="loading"
       background-color="#f0f0f0"
@@ -172,9 +172,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { Swipe, SwipeItem, Lazyload, Skeleton } from "vant";
 
 var VueElementLoading = require("vue-element-loading");
-import NaveBar from "@/common/components/navBar.vue";
 import TourismService from "@/services/tourismService";
-import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 Vue.use(Lazyload);
 @Component({
@@ -182,7 +180,7 @@ Vue.use(Lazyload);
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    NaveBar,
+    'nav-bar':()=>import('@/common/components/navBar.vue'),
     VueElementLoading
   }
 })

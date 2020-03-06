@@ -1,6 +1,6 @@
 <template lang="">
   <div class="search-layout">
-    <NavBar class="search-banner">
+    <nav-bar class="search-banner">
       <div class="search-left" slot="nav-left">
         <van-icon name="wap-home-o" @click="goHome" size="30px" />
         <van-icon
@@ -14,7 +14,7 @@
       <span class="my" slot="nav-right">
         <router-link to="/personalCenter">我的</router-link>
       </span>
-    </NavBar>
+    </nav-bar>
     <vue-element-loading
       :active="loading"
       background-color="#f0f0f0"
@@ -58,11 +58,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { Image, Icon, Toast } from "vant";
 var VueElementLoading = require("vue-element-loading");
-import NavBar from "@/common/components/navBar.vue";
-import ProductList from "./components/productList.vue";
-import NavList from "@/common/components/navList.vue";
 import TourismService from "@/services/tourismService";
-import ErrorPage from "@/common/components/error.vue";
 import common from "@/utils/common";
 @Component({
   name: "SearchPanelByCategory",
@@ -71,10 +67,10 @@ import common from "@/utils/common";
     [Icon.name]: Icon,
     Toast,
     VueElementLoading,
-    NavBar,
-    ProductList,
-    NavList,
-    ErrorPage
+    'nav-bar':()=>import('@/common/components/navBar.vue'),
+    'product-list':()=>import('./components/productList.vue'),
+    'nav-list':()=>import('@/common/components/navList.vue'),
+    'error-page':()=>import('@/common/components/error.vue'),
   }
 })
 class searchPanelByCategory extends Vue {
