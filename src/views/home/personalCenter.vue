@@ -64,6 +64,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { Icon, Button } from "vant";
 import CustomerService from "@/services/customerService";
+import common from "@/utils/common";
 @Component({
   name: "PersonalCenter",
   components: {
@@ -78,8 +79,12 @@ class PersonalCenter extends Vue {
   logOut() {
     CustomerService.logOut().then(ret => {
       if(ret.status==200){
-        this.$router.replace("/login");
+        this.$router.replace("/home");
       }
+    }).catch(err=>{
+      let text = common.GetHttpCodeMsg(err.response.status);
+      let url=`/error?showNav=true&text=${text}`
+      this.$router.replace(url);
     });
   }
   goHome() {

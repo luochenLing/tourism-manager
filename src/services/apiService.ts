@@ -1,10 +1,9 @@
 import request from "@/utils/request";
 import common from "@/utils/common";
 import configEmuns from "@/globalConfig/configEmuns";
-const isProd=process.env.NODE_ENV==='production';
-if(!isProd){
-  var Qs =require("qs");
-}
+
+const Qs =require("qs");
+
 class ApiService {
   static async GetApiToken() {
     //这里只写方法的controller和action他就会以当前网址的IP和端口自动补全，这里/connect/token和后面的地址名称是有对应的，所以会访问配置里对应KEY的代理配置
