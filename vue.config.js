@@ -2,7 +2,7 @@
 const isProduction = process.env.NODE_ENV === "production";
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
-const productionGzipExtensions = ['js', 'css'];
+const productionGzipExtensions = ['js', 'css','ts'];
 module.exports = {
   devServer: {
     proxy: {
