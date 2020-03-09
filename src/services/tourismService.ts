@@ -1,27 +1,18 @@
 import request from "@/utils/request";
-import ApiService from "@/services/apiService";
 class TourismService {
   /**
    * 首页轮播图获取
    */
   static async GetSwpierList() {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = "/api/TravelInfo/GetSwpierListAsync";
-    return await request.get(token, url);
+    return await request.get(url);
   }
   /**
    * 热门城市获取
    */
   static async GetHotCityList() {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = "/api/TravelInfo/GetHotCityListAsync";
-    return await request.get(token, url);
+    return await request.get(url);
   }
 
   /**
@@ -32,13 +23,8 @@ class TourismService {
     pageSize: number = 10,
     pageIndex: number = 1
   ) {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
-
     let url = `/api/TravelInfo/GetTravelInfoListByProTypeAsync?proType=${proType}&pageSize=${pageSize}&pageIndex=${pageIndex}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
   /**
@@ -49,13 +35,8 @@ class TourismService {
     pageSize: number = 10,
     pageIndex: number = 1
   ) {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
-
     let url = `/api/TravelInfo/GetTravelInfoListByFrontierAsync?frontier=${frontier}&pageSize=${pageSize}&pageIndex=${pageIndex}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
   /**根据地名查找商品列表*/
@@ -64,38 +45,26 @@ class TourismService {
     pageSize: number = 10,
     pageIndex: number = 1
   ) {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetTravelListByAreaAsync?areaName=${areaName}&pageSize=${pageSize}&pageIndex=${pageIndex}`;
 
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
   /**
    * 获取筛选条件
    */
   static async GetTravelConditionList() {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetTravelConditionListAsync`;
-    return await request.get(token, url);
+    return await request.get(url);
   }
 
   /**
    * 根据筛选条件获取列表
    */
   static async GetTravelInfoListByFilter(params: any) {
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetTravelInfoListByFilterAsync`;
     params = JSON.stringify(params);
-    return await request.post(token, url, params);
+    return await request.post(url,true,params);
   }
 
   /**
@@ -103,12 +72,8 @@ class TourismService {
    * @param proId 产品ID
    */
   static async GetTravelInfoById(proId:string){
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetTravelInfoByIdAsync?proId=${proId}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
   /**
@@ -116,12 +81,8 @@ class TourismService {
    * @param proId 产品ID
    */
   static async GetMediaInfoListById(proId:string){
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetMediaInfoListByIdAsync?proId=${proId}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
    /**
@@ -129,12 +90,8 @@ class TourismService {
    * @param userId 产品ID
    */
   static async GetCouponListByUserId(userId:string){
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetCouponListByUserIdAsync?userId=${userId}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
      /**
@@ -142,21 +99,13 @@ class TourismService {
    * @param proId 产品ID
    */
   static async GetTravelActivityListByProId(proId:string){
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/GetTravelActivityListByProIdAsync?proId=${proId}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
   static async RelatedProducts(areaName:string){
-    let token;
-    await ApiService.GetApiToken().then(ret => {
-      token = ret;
-    });
     let url = `/api/TravelInfo/RelatedProductsAsync?areaName=${areaName}`;
-    return await request.post(token, url);
+    return await request.post(url);
   }
 
 }

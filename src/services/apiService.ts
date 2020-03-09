@@ -18,7 +18,7 @@ class ApiService {
         password: "tourismPwd"
       };
       
-      await request.post(null,url, Qs.stringify(obj,{ arrayFormat: 'brackets' }),'application/x-www-form-urlencoded').then(ret => {
+      await request.post(url,false, Qs.stringify(obj,{ arrayFormat: 'brackets' }),'application/x-www-form-urlencoded').then(ret => {
         if (ret.data) {
           //查到数据后，存到localstorage中
           let curData = new Date();

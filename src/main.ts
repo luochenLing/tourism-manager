@@ -2,7 +2,6 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import "@/my-theme/index.less";
 import CustomerService from "@/services/customerService";
 import configEnums from "./globalConfig/configEmuns";
 const isProd = process.env.NODE_ENV === "production";
