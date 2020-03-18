@@ -53,7 +53,7 @@ module.exports = {
       }
     }
   },
-  //添加VSCODE调试
+  //开发环境添加sourcemap支持
   configureWebpack: config => {
     if (!isProduction) {
       config.devtool = "source-map";

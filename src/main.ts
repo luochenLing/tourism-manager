@@ -6,6 +6,7 @@ import CustomerService from "@/services/customerService";
 import configEnums from "./globalConfig/configEmuns";
 const isProd = process.env.NODE_ENV === "production";
 if (!isProd) {
+  //如果是开发环境，配置一个vuex的调试工具
   Vue.config.devtools = true;
 }
 const FastClick = require("fastclick");
